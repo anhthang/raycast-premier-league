@@ -1,13 +1,13 @@
 import { Action, ActionPanel, List, Icon } from "@raycast/api";
 import { useEffect, useState } from "react";
 import json2md from "json2md";
-import SeasonDropdown from "./components/season_dropdown";
+import SeasonDropdown, { seasons } from "./components/season_dropdown";
 import { getTables } from "./api";
 import { Entry, Table } from "./types";
 
 export default function GetTables() {
   const [tables, setTables] = useState<Table[]>([]);
-  const [season, setSeason] = useState<string>("418");
+  const [season, setSeason] = useState<string>(seasons[0].value);
   const [loading, setLoading] = useState<boolean>(false);
   const [showDetails, setShowDetails] = useState<boolean>(false);
 
@@ -20,22 +20,47 @@ export default function GetTables() {
   }, [season]);
 
   const club = (entry: Entry): json2md.DataObject => {
-    const { overall, team, ground } = entry;
+    const { overall, team, ground, form, next } = entry;
 
-    return [
+    const dataObject = [
       { h1: team.name },
       { h2: "Overview" },
       { p: ground.name ? `Stadium: ${ground.name}, **${ground.city}**` : "" },
       { p: ground.capacity ? `Capacity: ${ground.capacity}` : "" },
       { h2: "Stats" },
-      { p: `Played: ${overall.played}` },
-      { p: `Won: ${overall.won}` },
-      { p: `Drawn: ${overall.drawn}` },
-      { p: `Lost: ${overall.lost}` },
-      { p: `Goals For: ${overall.goalsFor}` },
-      { p: `Goals Against: ${overall.goalsAgainst}` },
-      { p: `Goal Difference: ${overall.goalsDifference}` },
+      {
+        p: [
+          `Played: ${overall.played}`,
+          `Won: ${overall.won}`,
+          `Drawn: ${overall.drawn}`,
+          `Lost: ${overall.lost}`,
+          `Goals For: ${overall.goalsFor}`,
+          `Goals Against: ${overall.goalsAgainst}`,
+          `Goal Difference: ${overall.goalsDifference}`,
+        ],
+      },
+      { h2: "Recent Results" },
+      {
+        ul: form.reverse().map((m) => {
+          return `${m.teams[0].team.name} ${m.teams[0].score} - ${m.teams[1].score} ${m.teams[1].team.name}`;
+        }),
+      },
     ];
+
+    if (next) {
+      dataObject.push(
+        { h2: "Next Fixture" },
+        {
+          p: [
+            `**${next.teams[0].team.name} - ${next.teams[1].team.name}**`,
+            `Time: ${next.kickoff.label}`,
+            `Stadium: ${next.ground.name}, **${next.ground.city}**`,
+          ],
+        }
+      );
+    }
+
+    return dataObject;
   };
 
   return (

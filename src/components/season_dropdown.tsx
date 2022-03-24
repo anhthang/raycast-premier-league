@@ -1,6 +1,6 @@
 import { List } from "@raycast/api";
 
-const seasons = [
+export const seasons = [
   {
     title: "2021/22",
     value: "418",
