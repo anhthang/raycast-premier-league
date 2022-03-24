@@ -2,7 +2,7 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "premier-league",
   "title": "Premier League",
-  "description": "View the latest Premier League tables, form guides and season archives, on the official website of the Premier League.",
+  "description": "View the latest Premier League tables, form guides and season archives in Raycast.",
   "icon": "icon.png",
   "author": "anhthang",
   "license": "MIT",
@@ -12,9 +12,9 @@
   "commands": [
     {
       "name": "table",
-      "title": "First Team",
+      "title": "Standings",
       "subtitle": "Premier League",
-      "description": "View the latest Premier League tablesfrom the official website of the Premier League.",
+      "description": "View the latest Premier League tables, form guides and season archives.",
       "mode": "view"
     }
   ],

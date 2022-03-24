@@ -135,6 +135,7 @@ export default function SeasonDropdown(props: {
               key={season.value}
               value={season.value}
               title={season.title}
+              icon="⚽️"
             />
           );
         })}

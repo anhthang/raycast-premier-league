@@ -3,7 +3,9 @@
   <h1 align="center">Premier League</h1>
 </p>
 
-View the latest Premier League tables, form guides and season archives, on the official website of the Premier League in [Raycast](https://raycast.com/)
+View the latest Premier League tables, form guides and season archives in [Raycast](https://raycast.com/)
+
+![Example](./metadata/epl-01.png)
 
 ## Issues
 
