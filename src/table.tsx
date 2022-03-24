@@ -20,7 +20,7 @@ export default function GetTables() {
   }, [season]);
 
   const club = (entry: Entry): json2md.DataObject => {
-    const { overall, team, ground, form, next } = entry;
+    const { overall, team, ground, form, next, startingPosition } = entry;
 
     const dataObject = [
       { h1: team.name },
@@ -30,6 +30,7 @@ export default function GetTables() {
       { h2: "Stats" },
       {
         p: [
+          `Previous Position: ${startingPosition}`,
           `Played: ${overall.played}`,
           `Won: ${overall.won}`,
           `Drawn: ${overall.drawn}`,
