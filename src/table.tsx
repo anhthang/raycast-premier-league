@@ -91,7 +91,10 @@ export default function GetTables() {
               if (!showDetails && next) {
                 const nextTeam =
                   ground.id === next.ground.id ? next.teams[1] : next.teams[0];
-                props.accessoryIcon = `https://resources.premierleague.com/premierleague/badges/${nextTeam.team.altIds.opta}.svg`;
+                props.accessoryIcon = {
+                  source: `https://resources.premierleague.com/premierleague/badges/${nextTeam.team.altIds.opta}.svg`,
+                  fallback: "default.png",
+                };
               }
 
               return (
@@ -100,7 +103,7 @@ export default function GetTables() {
                   title={`${position}. ${team.name}`}
                   icon={{
                     source: `https://resources.premierleague.com/premierleague/badges/${team.altIds.opta}.svg`,
-                    fallback: "icon.png",
+                    fallback: "default.png",
                   }}
                   {...props}
                   actions={
