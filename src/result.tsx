@@ -7,6 +7,7 @@ import ClubDropdown from "./components/club_dropdown";
 
 export default function Fixture() {
   const [fixtures, setFixtures] = useState<Content[]>([]);
+  const [lastPage, setLastPage] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [club, setClub] = useState<string>("-1");
   const [page, setPage] = useState<number>(0);
@@ -27,6 +28,9 @@ export default function Fixture() {
 
     getFixtures(club, page, "desc", "C").then((data) => {
       const matches = fixtures.concat(data);
+      if (data.length === 0) {
+        setLastPage(true);
+      }
       setFixtures(matches);
       setLoading(false);
     });
@@ -59,13 +63,15 @@ export default function Fixture() {
                       <Action.OpenInBrowser
                         url={`https://www.premierleague.com/match/${match.id}`}
                       />
-                      <Action
-                        title="Load More"
-                        icon={Icon.MagnifyingGlass}
-                        onAction={() => {
-                          setPage(page + 1);
-                        }}
-                      />
+                      {!lastPage && (
+                        <Action
+                          title="Load More"
+                          icon={Icon.MagnifyingGlass}
+                          onAction={() => {
+                            setPage(page + 1);
+                          }}
+                        />
+                      )}
                     </ActionPanel>
                   }
                 />
