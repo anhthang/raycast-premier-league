@@ -1,9 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { showToast, Toast } from "@raycast/api";
-import { PremierLeague, Table } from "../types/table";
+import { PremierLeague, Table, TeamTeam } from "../types/table";
 import { Content, Fixture } from "../types/fixture";
-import { seasons } from "../components/season_dropdown";
-import { clubs } from "../components/club_dropdown";
 
 function showFailureToast() {
   showToast(
@@ -12,6 +10,50 @@ function showFailureToast() {
     "Please try again later"
   );
 }
+
+const headers = {
+  Origin: "https://www.premierleague.com",
+};
+
+export const getSeasons = async () => {
+  const config: AxiosRequestConfig = {
+    method: "GET",
+    url: "https://footballapi.pulselive.com/football/competitions/1/compseasons",
+    params: {
+      page: 0,
+      pageSize: 100,
+    },
+    headers,
+  };
+
+  try {
+    const { data } = await axios(config);
+
+    return data.content;
+  } catch (e) {
+    showFailureToast();
+
+    return [];
+  }
+};
+
+export const getTeams = async (season: string) => {
+  const config: AxiosRequestConfig = {
+    method: "GET",
+    url: `https://footballapi.pulselive.com/football/compseasons/${season}/teams`,
+    headers,
+  };
+
+  try {
+    const { data }: AxiosResponse<TeamTeam[]> = await axios(config);
+
+    return data;
+  } catch (e) {
+    showFailureToast();
+
+    return [];
+  }
+};
 
 export const getTables = async (seasonId: string): Promise<Table[]> => {
   const config: AxiosRequestConfig = {
@@ -23,9 +65,7 @@ export const getTables = async (seasonId: string): Promise<Table[]> => {
       detail: 2,
       FOOTBALL_COMPETITION: 1,
     },
-    headers: {
-      Origin: "https://www.premierleague.com",
-    },
+    headers,
   };
 
   try {
@@ -39,30 +79,22 @@ export const getTables = async (seasonId: string): Promise<Table[]> => {
   }
 };
 
-export const getFixtures = async (
-  clubId: string,
-  page: number,
-  sort: string,
-  statuses: string
-): Promise<Content[]> => {
-  const teams = clubId === "-1" ? clubs.map((c) => c.value).join() : clubId;
-
+export const getFixtures = async (props: {
+  teams?: string;
+  page: number;
+  sort: string;
+  statuses: string;
+}): Promise<Content[]> => {
   const config: AxiosRequestConfig = {
     method: "get",
     url: `https://footballapi.pulselive.com/football/fixtures`,
     params: {
       comps: 1,
-      teams,
-      compSeasons: seasons[0].value,
-      page,
       pageSize: 40,
-      sort,
-      statuses,
       altIds: true,
+      ...props,
     },
-    headers: {
-      Origin: "https://www.premierleague.com",
-    },
+    headers,
   };
 
   try {

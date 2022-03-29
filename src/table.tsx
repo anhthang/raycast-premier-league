@@ -1,13 +1,16 @@
 import { Action, ActionPanel, List, Icon, Image, Color } from "@raycast/api";
 import { useEffect, useState } from "react";
 import json2md from "json2md";
-import SeasonDropdown, { seasons } from "./components/season_dropdown";
+import SeasonDropdown from "./components/season_dropdown";
 import { getTables } from "./api";
 import { Entry, Table } from "./types/table";
+import useSeasons from "./hooks/useSeasons";
 
 export default function GetTables() {
+  const seasons = useSeasons();
+
   const [tables, setTables] = useState<Table[]>([]);
-  const [season, setSeason] = useState<string>(seasons[0].value);
+  const [season, setSeason] = useState<string>(seasons[0]?.id.toString());
   const [loading, setLoading] = useState<boolean>(false);
   const [showStats, setShowStats] = useState<boolean>(false);
 

@@ -1,40 +1,24 @@
-import { Action, ActionPanel, Icon, List } from "@raycast/api";
-import { useEffect, useState } from "react";
+import { Action, ActionPanel, List } from "@raycast/api";
+import { useState } from "react";
 import groupBy from "lodash.groupby";
-import { getFixtures } from "./api";
-import { Content } from "./types/fixture";
 import ClubDropdown from "./components/club_dropdown";
+import useTeams from "./hooks/useTeams";
+import useSeasons from "./hooks/useSeasons";
+import useFixtures from "./hooks/useFixtures";
 
 export default function Fixture() {
-  const [fixtures, setFixtures] = useState<Content[]>([]);
-  const [lastPage, setLastPage] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [club, setClub] = useState<string>("-1");
+  const seasons = useSeasons();
+  const clubs = useTeams(seasons[0]?.id.toString());
+
   const [page, setPage] = useState<number>(0);
+  const [teams, setTeams] = useState<string>("-1");
 
-  useEffect(() => {
-    setLoading(true);
-    setFixtures([]);
-    setPage(0);
-
-    getFixtures(club, page, "desc", "C").then((data) => {
-      setFixtures(data);
-      setLoading(false);
-    });
-  }, [club]);
-
-  useEffect(() => {
-    setLoading(true);
-
-    getFixtures(club, page, "desc", "C").then((data) => {
-      const matches = fixtures.concat(data);
-      if (data.length === 0) {
-        setLastPage(true);
-      }
-      setFixtures(matches);
-      setLoading(false);
-    });
-  }, [page]);
+  const { fixtures, loading } = useFixtures({
+    teams,
+    page,
+    sort: "desc",
+    statuses: "C",
+  });
 
   const categories = groupBy(fixtures, (f) => f.kickoff.label?.split(",")[0]);
 
@@ -42,7 +26,7 @@ export default function Fixture() {
     <List
       throttle
       isLoading={loading}
-      searchBarAccessory={<ClubDropdown onSelect={setClub} />}
+      searchBarAccessory={<ClubDropdown teams={clubs} onSelect={setTeams} />}
     >
       {Object.entries(categories).map(([label, matches]) => {
         return (
@@ -61,7 +45,7 @@ export default function Fixture() {
                       <Action.OpenInBrowser
                         url={`https://www.premierleague.com/match/${match.id}`}
                       />
-                      {!lastPage && (
+                      {/* {!lastPage && (
                         <Action
                           title="Load More"
                           icon={Icon.MagnifyingGlass}
@@ -69,7 +53,7 @@ export default function Fixture() {
                             setPage(page + 1);
                           }}
                         />
-                      )}
+                      )} */}
                     </ActionPanel>
                   }
                 />
