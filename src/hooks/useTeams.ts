@@ -6,11 +6,13 @@ interface Club {
   value: string;
 }
 
-const useTeams = (season: string | undefined): Club[] => {
+const useTeams = (season: string | undefined) => {
   const [clubs, setClubs] = useState<Club[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (season) {
+      setLoading(true);
       getTeams(season).then((data) => {
         const teams: Club[] = data.map((team) => ({
           title: team.name,
@@ -23,11 +25,12 @@ const useTeams = (season: string | undefined): Club[] => {
         });
 
         setClubs(teams);
+        setLoading(false);
       });
     }
   }, [season]);
 
-  return clubs;
+  return { clubs, loading };
 };
 
 export default useTeams;

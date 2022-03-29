@@ -5,20 +5,26 @@ import { format, parse } from "date-fns";
 import { useFixtures, useSeasons, useTeams } from "./hooks";
 
 export default function Fixture() {
-  const seasons = useSeasons();
-  const clubs = useTeams(seasons[0]?.id.toString());
+  const season = useSeasons();
+  const club = useTeams(season.seasons[0]?.id.toString());
 
   const [page, setPage] = useState<number>(0);
   const [teams, setTeams] = useState<string>("-1");
 
-  const { fixtures, loading } = useFixtures({
+  const fixture = useFixtures({
     teams,
     page,
     sort: "asc",
     statuses: "U,L",
   });
 
-  const categories = groupBy(fixtures, (f) => f.kickoff.label?.split(",")[0]);
+  const loading = [season.loading, club.loading, fixture.loading].some(
+    (i) => i
+  );
+  const categories = groupBy(
+    fixture.fixtures,
+    (f) => f.kickoff.label?.split(",")[0]
+  );
 
   return (
     <List
@@ -27,7 +33,7 @@ export default function Fixture() {
       searchBarAccessory={
         <List.Dropdown tooltip="Filter by Club" onChange={setTeams}>
           <List.Dropdown.Section>
-            {clubs.map((club) => {
+            {club.clubs.map((club) => {
               return (
                 <List.Dropdown.Item
                   key={club.value}

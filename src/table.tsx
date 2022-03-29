@@ -5,12 +5,16 @@ import { Entry } from "./types/table";
 import { useSeasons, useTables } from "./hooks";
 
 export default function GetTables() {
-  const seasons = useSeasons();
+  const allSeason = useSeasons();
 
-  const [season, setSeason] = useState<string>(seasons[0]?.id.toString());
+  const [season, setSeason] = useState<string>(
+    allSeason.seasons[0]?.id.toString()
+  );
   const [showStats, setShowStats] = useState<boolean>(false);
 
-  const { tables, loading } = useTables(season);
+  const table = useTables(season);
+
+  const loading = [allSeason.loading, table.loading].some((i) => i);
 
   const club = (entry: Entry): json2md.DataObject => {
     const { overall, team, ground, form, next, startingPosition } = entry;
@@ -62,7 +66,7 @@ export default function GetTables() {
       searchBarAccessory={
         <List.Dropdown tooltip="Filter by Season" onChange={setSeason}>
           <List.Dropdown.Section>
-            {seasons.map((season) => {
+            {allSeason.seasons.map((season) => {
               return (
                 <List.Dropdown.Item
                   key={season.id}
@@ -77,7 +81,7 @@ export default function GetTables() {
       isLoading={loading}
       isShowingDetail={showStats}
     >
-      {tables.map((table) => {
+      {table.tables.map((table) => {
         return (
           <List.Section key={table.gameWeek}>
             {table.entries.map((entry) => {
