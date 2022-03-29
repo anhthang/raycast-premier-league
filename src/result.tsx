@@ -1,10 +1,7 @@
-import { Action, ActionPanel, List } from "@raycast/api";
+import { Action, ActionPanel, Icon, List } from "@raycast/api";
 import { useState } from "react";
 import groupBy from "lodash.groupby";
-import ClubDropdown from "./components/club_dropdown";
-import useTeams from "./hooks/useTeams";
-import useSeasons from "./hooks/useSeasons";
-import useFixtures from "./hooks/useFixtures";
+import { useFixtures, useSeasons, useTeams } from "./hooks";
 
 export default function Fixture() {
   const seasons = useSeasons();
@@ -26,7 +23,21 @@ export default function Fixture() {
     <List
       throttle
       isLoading={loading}
-      searchBarAccessory={<ClubDropdown teams={clubs} onSelect={setTeams} />}
+      searchBarAccessory={
+        <List.Dropdown tooltip="Filter by Club" onChange={setTeams}>
+          <List.Dropdown.Section>
+            {clubs.map((club) => {
+              return (
+                <List.Dropdown.Item
+                  key={club.value}
+                  value={club.value}
+                  title={club.title}
+                />
+              );
+            })}
+          </List.Dropdown.Section>
+        </List.Dropdown>
+      }
     >
       {Object.entries(categories).map(([label, matches]) => {
         return (
@@ -45,15 +56,13 @@ export default function Fixture() {
                       <Action.OpenInBrowser
                         url={`https://www.premierleague.com/match/${match.id}`}
                       />
-                      {/* {!lastPage && (
-                        <Action
-                          title="Load More"
-                          icon={Icon.MagnifyingGlass}
-                          onAction={() => {
-                            setPage(page + 1);
-                          }}
-                        />
-                      )} */}
+                      <Action
+                        title="Load More"
+                        icon={Icon.MagnifyingGlass}
+                        onAction={() => {
+                          setPage(page + 1);
+                        }}
+                      />
                     </ActionPanel>
                   }
                 />

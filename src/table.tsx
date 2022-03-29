@@ -1,28 +1,16 @@
 import { Action, ActionPanel, List, Icon, Image, Color } from "@raycast/api";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import json2md from "json2md";
-import SeasonDropdown from "./components/season_dropdown";
-import { getTables } from "./api";
-import { Entry, Table } from "./types/table";
-import useSeasons from "./hooks/useSeasons";
+import { Entry } from "./types/table";
+import { useSeasons, useTables } from "./hooks";
 
 export default function GetTables() {
   const seasons = useSeasons();
 
-  const [tables, setTables] = useState<Table[]>([]);
   const [season, setSeason] = useState<string>(seasons[0]?.id.toString());
-  const [loading, setLoading] = useState<boolean>(false);
   const [showStats, setShowStats] = useState<boolean>(false);
 
-  useEffect(() => {
-    setTables([]);
-    setLoading(true);
-
-    getTables(season).then((data) => {
-      setTables(data);
-      setLoading(false);
-    });
-  }, [season]);
+  const { tables, loading } = useTables(season);
 
   const club = (entry: Entry): json2md.DataObject => {
     const { overall, team, ground, form, next, startingPosition } = entry;
@@ -71,7 +59,21 @@ export default function GetTables() {
   return (
     <List
       throttle
-      searchBarAccessory={<SeasonDropdown onSelect={setSeason} />}
+      searchBarAccessory={
+        <List.Dropdown tooltip="Filter by Season" onChange={setSeason}>
+          <List.Dropdown.Section>
+            {seasons.map((season) => {
+              return (
+                <List.Dropdown.Item
+                  key={season.id}
+                  value={season.id.toString()}
+                  title={season.label}
+                />
+              );
+            })}
+          </List.Dropdown.Section>
+        </List.Dropdown>
+      }
       isLoading={loading}
       isShowingDetail={showStats}
     >

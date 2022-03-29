@@ -85,6 +85,10 @@ export const getFixtures = async (props: {
   sort: string;
   statuses: string;
 }): Promise<Content[]> => {
+  if (props.teams === "-1") {
+    delete props.teams;
+  }
+
   const config: AxiosRequestConfig = {
     method: "get",
     url: `https://footballapi.pulselive.com/football/fixtures`,

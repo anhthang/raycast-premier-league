@@ -3,7 +3,7 @@ import { getFixtures } from "../api";
 import { Content } from "../types/fixture";
 
 interface PropsType {
-  teams?: string;
+  teams: string;
   page: number;
   sort: string;
   statuses: string;
@@ -17,15 +17,21 @@ const useFixtures = (props: PropsType) => {
     setLoading(true);
     setFixtures([]);
 
-    if (props.teams === "-1") {
-      delete props.teams;
-    }
-
     getFixtures(props).then((data) => {
       setFixtures(data);
       setLoading(false);
     });
-  }, [props.teams, props.page]);
+  }, [props.teams]);
+
+  useEffect(() => {
+    setLoading(true);
+
+    getFixtures(props).then((data) => {
+      const matches = fixtures.concat(data);
+      setFixtures(matches);
+      setLoading(false);
+    });
+  }, [props.page]);
 
   return { fixtures, loading };
 };

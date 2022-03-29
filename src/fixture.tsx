@@ -2,10 +2,7 @@ import { Action, ActionPanel, Icon, List } from "@raycast/api";
 import { useState } from "react";
 import groupBy from "lodash.groupby";
 import { format, parse } from "date-fns";
-import ClubDropdown from "./components/club_dropdown";
-import useTeams from "./hooks/useTeams";
-import useSeasons from "./hooks/useSeasons";
-import useFixtures from "./hooks/useFixtures";
+import { useFixtures, useSeasons, useTeams } from "./hooks";
 
 export default function Fixture() {
   const seasons = useSeasons();
@@ -27,7 +24,21 @@ export default function Fixture() {
     <List
       throttle
       isLoading={loading}
-      searchBarAccessory={<ClubDropdown teams={clubs} onSelect={setTeams} />}
+      searchBarAccessory={
+        <List.Dropdown tooltip="Filter by Club" onChange={setTeams}>
+          <List.Dropdown.Section>
+            {clubs.map((club) => {
+              return (
+                <List.Dropdown.Item
+                  key={club.value}
+                  value={club.value}
+                  title={club.title}
+                />
+              );
+            })}
+          </List.Dropdown.Section>
+        </List.Dropdown>
+      }
     >
       {Object.entries(categories).map(([label, matches]) => {
         return (
@@ -60,6 +71,13 @@ export default function Fixture() {
                     <ActionPanel>
                       <Action.OpenInBrowser
                         url={`https://www.premierleague.com/match/${match.id}`}
+                      />
+                      <Action
+                        title="Load More"
+                        icon={Icon.MagnifyingGlass}
+                        onAction={() => {
+                          setPage(page + 1);
+                        }}
                       />
                     </ActionPanel>
                   }
