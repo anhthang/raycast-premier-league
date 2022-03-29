@@ -62,13 +62,15 @@ export default function Fixture() {
                       <Action.OpenInBrowser
                         url={`https://www.premierleague.com/match/${match.id}`}
                       />
-                      <Action
-                        title="Load More"
-                        icon={Icon.MagnifyingGlass}
-                        onAction={() => {
-                          setPage(page + 1);
-                        }}
-                      />
+                      {!fixture.lastPage && (
+                        <Action
+                          title="Load More"
+                          icon={Icon.MagnifyingGlass}
+                          onAction={() => {
+                            setPage(page + 1);
+                          }}
+                        />
+                      )}
                     </ActionPanel>
                   }
                 />

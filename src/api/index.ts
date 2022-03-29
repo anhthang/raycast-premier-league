@@ -84,7 +84,7 @@ export const getFixtures = async (props: {
   page: number;
   sort: string;
   statuses: string;
-}): Promise<Content[]> => {
+}): Promise<[Content[], boolean]> => {
   if (props.teams === "-1") {
     delete props.teams;
   }
@@ -103,11 +103,12 @@ export const getFixtures = async (props: {
 
   try {
     const { data }: AxiosResponse<Fixture> = await axios(config);
+    const lastPage = data.pageInfo.page === data.pageInfo.numPages - 1;
 
-    return data.content;
+    return [data.content, lastPage];
   } catch (e) {
     showFailureToast();
 
-    return [];
+    return [[], false];
   }
 };
