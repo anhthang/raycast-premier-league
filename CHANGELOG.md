@@ -2,6 +2,8 @@
 
 ## [Improvements] - 2022-03-30
 
+- Added Players
+- Added Managers
 - Get seasons, clubs from API instead
 - Refactor: Use hooks, merge & remove duplicate interface
 

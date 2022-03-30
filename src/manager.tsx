@@ -1,5 +1,7 @@
-import { List } from "@raycast/api";
+import { Action, ActionPanel, Detail, Icon, List } from "@raycast/api";
+import json2md from "json2md";
 import { useManagers, useSeasons } from "./hooks";
+import { PlayerContent } from "./types";
 
 function getFlagEmoji(countryCode: string) {
   return countryCode
@@ -7,7 +9,39 @@ function getFlagEmoji(countryCode: string) {
     .replace(/./g, (char) => String.fromCodePoint(127397 + char.charCodeAt(0)));
 }
 
-export default function Player() {
+function PlayerProfile(props: PlayerContent) {
+  return (
+    <Detail
+      markdown={json2md([
+        { h1: props.name.display },
+        {
+          img: {
+            source: `https://resources.premierleague.com/premierleague/photos/players/250x250/${props.altIds.opta}.png`,
+          },
+        },
+      ])}
+      metadata={
+        <Detail.Metadata>
+          <Detail.Metadata.Label
+            title="Nationality"
+            text={props.birth.country.country}
+          />
+          <Detail.Metadata.Label
+            title="Date of Birth"
+            text={props.birth.date.label}
+          />
+          <Detail.Metadata.Label title="Age" text={props.age} />
+          <Detail.Metadata.Label
+            title="Team"
+            text={props.currentTeam?.club.name}
+          />
+        </Detail.Metadata>
+      }
+    />
+  );
+}
+
+export default function Manager() {
   const season = useSeasons();
   const manager = useManagers(season.seasons[0]?.id.toString());
 
@@ -31,6 +65,15 @@ export default function Player() {
                 icon: getFlagEmoji(p.birth.country.isoCode.slice(0, 2)),
               },
             ]}
+            actions={
+              <ActionPanel>
+                <Action.Push
+                  title="Show Details"
+                  icon={Icon.Sidebar}
+                  target={<PlayerProfile {...p} />}
+                />
+              </ActionPanel>
+            }
           />
         );
       })}

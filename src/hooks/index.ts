@@ -5,4 +5,11 @@ import useSeasons from "./useSeasons";
 import useTables from "./useTables";
 import useTeams from "./useTeams";
 
-export { useFixtures, useManagers, usePlayers, useSeasons, useTables, useTeams };
+export {
+  useFixtures,
+  useManagers,
+  usePlayers,
+  useSeasons,
+  useTables,
+  useTeams,
+};

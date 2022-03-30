@@ -112,7 +112,7 @@ export const getFixtures = async (props: {
   }
 };
 
-export const getPlayers = async (season: string) => {
+export const getPlayers = async (season: string, page: number) => {
   const config: AxiosRequestConfig = {
     method: "get",
     url: `https://footballapi.pulselive.com/football/players`,
@@ -120,7 +120,7 @@ export const getPlayers = async (season: string) => {
       pageSize: 30,
       compSeasons: season,
       altIds: true,
-      page: 0,
+      page,
       type: "player",
       id: -1,
       compSeasonId: season,
