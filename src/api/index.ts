@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { showToast, Toast } from "@raycast/api";
-import { Standing, Fixture, Content, Table, TeamTeam } from "../types";
+import { Standing, Fixture, Content, Table, TeamTeam, Player } from "../types";
 
 function showFailureToast() {
   showToast(
@@ -109,5 +109,32 @@ export const getFixtures = async (props: {
     showFailureToast();
 
     return [[], false];
+  }
+};
+
+export const getPlayers = async (season: string) => {
+  const config: AxiosRequestConfig = {
+    method: "get",
+    url: `https://footballapi.pulselive.com/football/players`,
+    params: {
+      pageSize: 30,
+      compSeasons: season,
+      altIds: true,
+      page: 0,
+      type: "player",
+      id: -1,
+      compSeasonId: season,
+    },
+    headers,
+  };
+
+  try {
+    const { data }: AxiosResponse<Player> = await axios(config);
+
+    return data.content;
+  } catch (e) {
+    showFailureToast();
+
+    return [];
   }
 };

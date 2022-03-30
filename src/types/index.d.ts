@@ -221,3 +221,54 @@ export interface Timestamp {
   millis: number;
   label: string;
 }
+
+export interface Player {
+  pageInfo: PageInfo;
+  content: PlayerContent[];
+}
+
+export interface PlayerContent {
+  playerId: number;
+  info: Info;
+  nationalTeam: NationalTeam;
+  currentTeam?: TeamTeam;
+  birth: Birth;
+  age: string;
+  name: Name;
+  id: number;
+  altIds: AltIDS;
+  previousTeam?: TeamTeam;
+}
+
+export interface Birth {
+  date: Timestamp;
+  country: NationalTeam;
+  place?: string;
+}
+
+export interface NationalTeam {
+  isoCode: string;
+  country: string;
+  demonym?: string;
+}
+
+export interface Info {
+  position: Position;
+  shirtNum?: number;
+  positionInfo: string;
+  loan?: boolean;
+}
+
+export enum Position {
+  D = "Defender",
+  F = "Forward",
+  G = "Goalkeeper",
+  M = "Midfielder",
+}
+
+export interface Name {
+  display: string;
+  first: string;
+  last: string;
+  middle?: string;
+}
