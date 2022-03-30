@@ -1,7 +1,7 @@
 import { Action, ActionPanel, List, Icon, Image, Color } from "@raycast/api";
 import { useState } from "react";
 import json2md from "json2md";
-import { Entry } from "./types/table";
+import { Entry } from "./types";
 import { useSeasons, useTables } from "./hooks";
 
 export default function GetTables() {

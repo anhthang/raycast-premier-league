@@ -1,7 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { showToast, Toast } from "@raycast/api";
-import { PremierLeague, Table, TeamTeam } from "../types/table";
-import { Content, Fixture } from "../types/fixture";
+import { Standing, Fixture, Content, Table, TeamTeam } from "../types";
 
 function showFailureToast() {
   showToast(
@@ -69,7 +68,7 @@ export const getTables = async (seasonId: string): Promise<Table[]> => {
   };
 
   try {
-    const { data }: AxiosResponse<PremierLeague> = await axios(config);
+    const { data }: AxiosResponse<Standing> = await axios(config);
 
     return data.tables;
   } catch (e) {

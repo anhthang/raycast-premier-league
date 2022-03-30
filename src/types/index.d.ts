@@ -3,6 +3,14 @@ export interface Fixture {
   content: Content[];
 }
 
+export interface Standing {
+  compSeason: CompSeason;
+  timestamp: Timestamp;
+  live: boolean;
+  dynamicallyGenerated: boolean;
+  tables: Table[];
+}
+
 export interface Content {
   gameweek: Gameweek;
   kickoff: Kickoff;
@@ -24,6 +32,40 @@ export interface Content {
   behindClosedDoors: boolean;
   id: number;
   altIds: AltIDS;
+}
+
+export interface Table {
+  gameWeek: number;
+  entries: Entry[];
+}
+
+export interface Entry {
+  team: TeamTeam;
+  position: number;
+  startingPosition: number;
+  overall: Stats;
+  home: Stats;
+  away: Stats;
+  annotations?: Annotation[];
+  form: Content[];
+  next: Content;
+  ground: Ground;
+}
+
+export interface Annotation {
+  type: string;
+  destination: string;
+}
+
+export interface Stats {
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalsDifference: number;
+  points: number;
 }
 
 export interface AltIDS {
@@ -105,8 +147,15 @@ export enum TypeEnum {
 export interface Ground {
   name: string;
   city: string;
+  capacity?: number;
+  location?: Location;
   source: Source;
   id: number;
+}
+
+export interface Location {
+  latitude: number;
+  longitude: number;
 }
 
 export enum Source {
@@ -166,4 +215,9 @@ export interface PageInfo {
   numPages: number;
   pageSize: number;
   numEntries: number;
+}
+
+export interface Timestamp {
+  millis: number;
+  label: string;
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getFixtures } from "../api";
-import { Content } from "../types/fixture";
+import { Content } from "../types";
 
 interface PropsType {
   teams: string;
