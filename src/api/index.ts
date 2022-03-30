@@ -138,3 +138,30 @@ export const getPlayers = async (season: string) => {
     return [];
   }
 };
+
+export const getManagers = async (compSeasons: string) => {
+  const config: AxiosRequestConfig = {
+    method: "get",
+    url: `https://footballapi.pulselive.com/football/teamofficials`,
+    params: {
+      pageSize: 100,
+      compSeasons,
+      compCodeForActivePlayer: "EN_PR",
+      comps: 1,
+      altIds: true,
+      type: "manager",
+      page: 0,
+    },
+    headers,
+  };
+
+  try {
+    const { data }: AxiosResponse<Player> = await axios(config);
+
+    return data.content;
+  } catch (e) {
+    showFailureToast();
+
+    return [];
+  }
+};
