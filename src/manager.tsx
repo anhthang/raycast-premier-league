@@ -2,12 +2,7 @@ import { Action, ActionPanel, Detail, Icon, List } from "@raycast/api";
 import json2md from "json2md";
 import { useManagers, useSeasons } from "./hooks";
 import { PlayerContent } from "./types";
-
-function getFlagEmoji(countryCode: string) {
-  return countryCode
-    .toUpperCase()
-    .replace(/./g, (char) => String.fromCodePoint(127397 + char.charCodeAt(0)));
-}
+import { getFlagEmoji } from "./utils";
 
 function PlayerProfile(props: PlayerContent) {
   return (
@@ -62,7 +57,7 @@ export default function Manager() {
                 text: p.birth.country.country,
               },
               {
-                icon: getFlagEmoji(p.birth.country.isoCode.slice(0, 2)),
+                icon: getFlagEmoji(p.birth.country.isoCode),
               },
             ]}
             actions={
