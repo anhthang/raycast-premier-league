@@ -8,6 +8,7 @@ import { getFlagEmoji } from "./utils";
 function PlayerProfile(props: PlayerContent) {
   return (
     <Detail
+      navigationTitle={`${props.name.display} | Profile`}
       markdown={json2md([
         { h1: props.name.display },
         {
