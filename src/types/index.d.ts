@@ -1,9 +1,19 @@
-export interface Fixture {
+export interface EPLClub {
+  pageInfo: PageInfo;
+  content: TeamTeam[];
+}
+
+export interface EPLFixture {
   pageInfo: PageInfo;
   content: Content[];
 }
 
-export interface Standing {
+export interface EPLPlayer {
+  pageInfo: PageInfo;
+  content: PlayerContent[];
+}
+
+export interface EPLStanding {
   compSeason: CompSeason;
   timestamp: Timestamp;
   live: boolean;
@@ -194,6 +204,7 @@ export interface TeamTeam {
   name: string;
   club: Club;
   teamType: TeamType;
+  grounds: Ground[];
   shortName: string;
   id: number;
   altIds: AltIDS;
@@ -220,11 +231,6 @@ export interface PageInfo {
 export interface Timestamp {
   millis: number;
   label: string;
-}
-
-export interface Player {
-  pageInfo: PageInfo;
-  content: PlayerContent[];
 }
 
 export interface PlayerContent {

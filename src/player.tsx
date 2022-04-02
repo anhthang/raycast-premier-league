@@ -1,8 +1,8 @@
 import { Action, ActionPanel, Detail, Icon, List } from "@raycast/api";
 import json2md from "json2md";
 import { useState } from "react";
-import { usePlayers, useSeasons } from "./hooks";
-import { PlayerContent } from "./types";
+import { usePlayers, useSeasons, useTeams } from "./hooks";
+import { Club, PlayerContent } from "./types";
 import { getFlagEmoji } from "./utils";
 
 function PlayerProfile(props: PlayerContent) {
@@ -47,31 +47,35 @@ function PlayerProfile(props: PlayerContent) {
   );
 }
 
-export default function Player() {
+export default function Player(props: { club: Club }) {
   const season = useSeasons();
+  const team = useTeams(season.seasons[0]?.id.toString());
   const [page, setPage] = useState<number>(0);
-  const [selectedSeason, setSeason] = useState<string>(
-    season.seasons[0]?.id.toString()
-  );
+  const [teamId, setTeam] = useState<string>(props.club?.id.toString());
 
-  const player = usePlayers(selectedSeason, page);
+  const player = usePlayers(teamId, season.seasons[0]?.id, page);
 
   return (
     <List
       throttle
+      navigationTitle={
+        props.club ? `Squad | ${props.club.name} | Club` : "Players"
+      }
       isLoading={season.loading || player.loading}
       searchBarAccessory={
-        <List.Dropdown tooltip="Filter by Season" onChange={setSeason}>
-          {season.seasons.map((s) => {
-            return (
-              <List.Dropdown.Item
-                key={s.id}
-                value={s.id.toString()}
-                title={s.label}
-              />
-            );
-          })}
-        </List.Dropdown>
+        props.club ? undefined : (
+          <List.Dropdown tooltip="Filter by Club" onChange={setTeam}>
+            {team.clubs.map((s) => {
+              return (
+                <List.Dropdown.Item
+                  key={s.value}
+                  value={s.value}
+                  title={s.title}
+                />
+              );
+            })}
+          </List.Dropdown>
+        )
       }
     >
       {player.players.map((p) => {

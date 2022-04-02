@@ -1,6 +1,14 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { showToast, Toast } from "@raycast/api";
-import { Standing, Fixture, Content, Table, TeamTeam, Player } from "../types";
+import {
+  EPLStanding,
+  EPLFixture,
+  Content,
+  Table,
+  TeamTeam,
+  EPLPlayer,
+  EPLClub,
+} from "../types";
 
 function showFailureToast() {
   showToast(
@@ -27,6 +35,31 @@ export const getSeasons = async () => {
 
   try {
     const { data } = await axios(config);
+
+    return data.content;
+  } catch (e) {
+    showFailureToast();
+
+    return [];
+  }
+};
+
+export const getClubs = async (compSeasons: string): Promise<TeamTeam[]> => {
+  const config: AxiosRequestConfig = {
+    method: "GET",
+    url: `https://footballapi.pulselive.com/football/teams`,
+    params: {
+      page: 0,
+      pageSize: 100,
+      comps: 1,
+      altIds: true,
+      compSeasons,
+    },
+    headers,
+  };
+
+  try {
+    const { data }: AxiosResponse<EPLClub> = await axios(config);
 
     return data.content;
   } catch (e) {
@@ -68,7 +101,7 @@ export const getTables = async (seasonId: string): Promise<Table[]> => {
   };
 
   try {
-    const { data }: AxiosResponse<Standing> = await axios(config);
+    const { data }: AxiosResponse<EPLStanding> = await axios(config);
 
     return data.tables;
   } catch (e) {
@@ -101,7 +134,7 @@ export const getFixtures = async (props: {
   };
 
   try {
-    const { data }: AxiosResponse<Fixture> = await axios(config);
+    const { data }: AxiosResponse<EPLFixture> = await axios(config);
     const lastPage = data.pageInfo.page === data.pageInfo.numPages - 1;
 
     return [data.content, lastPage];
@@ -112,24 +145,34 @@ export const getFixtures = async (props: {
   }
 };
 
-export const getPlayers = async (season: string, page: number) => {
+export const getPlayers = async (
+  teams: string,
+  season: number,
+  page: number
+) => {
+  const params: { [key: string]: string | number | boolean } = {
+    pageSize: 30,
+    compSeasons: season,
+    altIds: true,
+    page,
+    type: "player",
+    id: -1,
+    compSeasonId: season,
+  };
+
+  if (teams !== "-1") {
+    params.teams = teams;
+  }
+
   const config: AxiosRequestConfig = {
     method: "get",
     url: `https://footballapi.pulselive.com/football/players`,
-    params: {
-      pageSize: 30,
-      compSeasons: season,
-      altIds: true,
-      page,
-      type: "player",
-      id: -1,
-      compSeasonId: season,
-    },
+    params,
     headers,
   };
 
   try {
-    const { data }: AxiosResponse<Player> = await axios(config);
+    const { data }: AxiosResponse<EPLPlayer> = await axios(config);
 
     return data.content;
   } catch (e) {
@@ -156,7 +199,7 @@ export const getManagers = async (compSeasons: string) => {
   };
 
   try {
-    const { data }: AxiosResponse<Player> = await axios(config);
+    const { data }: AxiosResponse<EPLPlayer> = await axios(config);
 
     return data.content;
   } catch (e) {
