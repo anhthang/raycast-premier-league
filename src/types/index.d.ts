@@ -13,6 +13,13 @@ export interface EPLPlayer {
   content: PlayerContent[];
 }
 
+export interface EPLStaff {
+  compSeason: CompSeason;
+  team: TeamTeam;
+  players: PlayerContent[];
+  officials: Official[];
+}
+
 export interface EPLStanding {
   compSeason: CompSeason;
   timestamp: Timestamp;
@@ -238,12 +245,26 @@ export interface PlayerContent {
   info: Info;
   nationalTeam: NationalTeam;
   currentTeam?: TeamTeam;
+  previousTeam?: TeamTeam;
+  height?: number;
+  weight?: number;
+  latestPosition: LatestPosition;
+  appearances: number;
+  cleanSheets: number;
+  saves?: number;
+  goalsConceded?: number;
+  awards?: Awards;
+  joinDate?: Timestamp;
   birth: Birth;
   age: string;
   name: Name;
   id: number;
   altIds: AltIDS;
-  previousTeam?: TeamTeam;
+  goals?: number;
+  assists?: number;
+  tackles?: number;
+  shots?: number;
+  keyPasses?: number;
 }
 
 export interface Birth {
@@ -277,4 +298,42 @@ export interface Name {
   first: string;
   last: string;
   middle?: string;
+}
+
+export interface Awards {
+  GOLDEN_GLOVE?: Champion[];
+  CHAMPIONS?: Champion[];
+  PLAYER_OF_THE_MONTH?: GoalOfTheMonth[];
+  GOAL_OF_THE_MONTH?: GoalOfTheMonth[];
+  GOLDEN_BOOT?: Champion[];
+  PLAYER_OF_THE_SEASON?: GoalOfTheMonth[];
+}
+
+export interface Champion {
+  date: CHAMPIONDate;
+  compSeason: CHAMPIONCompSeason;
+}
+
+export interface CHAMPIONCompSeason {
+  label: string;
+  id: number;
+}
+
+export interface CHAMPIONDate {
+  year: number;
+  month: number;
+  day: number;
+}
+
+export interface GoalOfTheMonth {
+  date: CHAMPIONDate;
+  compSeason: CHAMPIONCompSeason;
+  notes?: string;
+}
+
+export enum LatestPosition {
+  Defender = "DEFENDER",
+  Forward = "FORWARD",
+  Goalkeeper = "GOALKEEPER",
+  Midfielder = "MIDFIELDER",
 }

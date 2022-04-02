@@ -1,7 +1,7 @@
 import { Action, ActionPanel, Detail, Icon, List } from "@raycast/api";
 import json2md from "json2md";
 import { useState } from "react";
-import { usePlayers, useSeasons, useTeams } from "./hooks";
+import { usePlayers, useSeasons, useStaffs, useTeams } from "./hooks";
 import { Club, PlayerContent } from "./types";
 import { getFlagEmoji } from "./utils";
 
@@ -27,33 +27,52 @@ function PlayerProfile(props: PlayerContent) {
             title="Date of Birth"
             text={props.birth.date.label}
           />
+          <Detail.Metadata.Label
+            title="Height (cm)"
+            text={props.height?.toString()}
+          />
           <Detail.Metadata.Label title="Age" text={props.age} />
           <Detail.Metadata.Separator />
           <Detail.Metadata.Label
-            title="Current Team"
-            text={props.currentTeam?.club.name}
-          />
-          <Detail.Metadata.Label
-            title="Previous Team"
-            text={props.previousTeam?.club.name}
+            title="Joined Date"
+            text={props.joinDate?.label}
           />
           <Detail.Metadata.Label
             title="Position"
             text={props.info.positionInfo}
           />
+          <Detail.Metadata.Label
+            title="Shirt Number"
+            text={props.info.shirtNum?.toString()}
+          />
         </Detail.Metadata>
+      }
+      actions={
+        <ActionPanel>
+          <Action.OpenInBrowser
+            url={`https://www.premierleague.com/players/${
+              props.id
+            }/${props.name.display.replace(/ /g, "-")}/overview`}
+          />
+        </ActionPanel>
       }
     />
   );
 }
 
 export default function Player(props: { club: Club }) {
-  const season = useSeasons();
-  const team = useTeams(season.seasons[0]?.id.toString());
-  const [page, setPage] = useState<number>(0);
-  const [teamId, setTeam] = useState<string>(props.club?.id.toString());
+  const [teamId, setTeam] = useState<string>(props.club?.id.toString() ?? "-1");
 
-  const player = usePlayers(teamId, season.seasons[0]?.id, page);
+  const season = useSeasons();
+  const seasonId = season.seasons[0]?.id.toString();
+  const team = useTeams(seasonId);
+
+  const [page, setPage] = useState<number>(0);
+
+  const player =
+    teamId === "-1"
+      ? usePlayers(teamId, seasonId, page)
+      : useStaffs(teamId, seasonId);
 
   return (
     <List
