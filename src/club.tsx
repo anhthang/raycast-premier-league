@@ -12,7 +12,8 @@ function ClubProfile(props: TeamTeam) {
         { h1: props.name },
         {
           img: {
-            source: `https://resources.premierleague.com/premierleague/badges/${props.altIds.opta}.svg`,
+            // source: `https://resources.premierleague.com/premierleague/badges/${props.altIds.opta}.svg`,
+            source: `https://resources.premierleague.com/premierleague/badges/100/${props.altIds.opta}@x2.png`,
           },
         },
       ])}

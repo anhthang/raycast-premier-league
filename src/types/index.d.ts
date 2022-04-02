@@ -301,17 +301,18 @@ export interface Name {
 }
 
 export interface Awards {
-  GOLDEN_GLOVE?: Champion[];
-  CHAMPIONS?: Champion[];
-  PLAYER_OF_THE_MONTH?: GoalOfTheMonth[];
-  GOAL_OF_THE_MONTH?: GoalOfTheMonth[];
-  GOLDEN_BOOT?: Champion[];
-  PLAYER_OF_THE_SEASON?: GoalOfTheMonth[];
+  GOLDEN_GLOVE?: Award[];
+  CHAMPIONS?: Award[];
+  PLAYER_OF_THE_MONTH?: Award[];
+  GOAL_OF_THE_MONTH?: Award[];
+  GOLDEN_BOOT?: Award[];
+  PLAYER_OF_THE_SEASON?: Award[];
 }
 
-export interface Champion {
+export interface Award {
   date: CHAMPIONDate;
   compSeason: CHAMPIONCompSeason;
+  notes?: string;
 }
 
 export interface CHAMPIONCompSeason {
@@ -323,12 +324,6 @@ export interface CHAMPIONDate {
   year: number;
   month: number;
   day: number;
-}
-
-export interface GoalOfTheMonth {
-  date: CHAMPIONDate;
-  compSeason: CHAMPIONCompSeason;
-  notes?: string;
 }
 
 export enum LatestPosition {

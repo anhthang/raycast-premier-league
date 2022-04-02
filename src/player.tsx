@@ -2,13 +2,37 @@ import { Action, ActionPanel, Detail, Icon, List } from "@raycast/api";
 import json2md from "json2md";
 import { useState } from "react";
 import { usePlayers, useSeasons, useStaffs, useTeams } from "./hooks";
-import { Club, PlayerContent } from "./types";
+import { Award, Club, PlayerContent } from "./types";
 import { getFlagEmoji } from "./utils";
+
+const awardMap: { [key: string]: string } = {
+  GOLDEN_GLOVE: "Golden Glove",
+  CHAMPIONS: "Premier League Champion",
+  PLAYER_OF_THE_MONTH: "Player of the Month",
+  GOAL_OF_THE_MONTH: "Goal of the Month",
+  GOLDEN_BOOT: "Golden Boot",
+  PLAYER_OF_THE_SEASON: "Player of the Season",
+};
+
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 function PlayerProfile(props: PlayerContent) {
   return (
     <Detail
-      navigationTitle={`${props.name.display} | Profile`}
+      navigationTitle={`${props.name.display} | Profile & Stats`}
       markdown={json2md([
         { h1: props.name.display },
         {
@@ -16,6 +40,38 @@ function PlayerProfile(props: PlayerContent) {
             source: `https://resources.premierleague.com/premierleague/photos/players/250x250/${props.altIds.opta}.png`,
           },
         },
+        {
+          h2: "Premier League Record",
+        },
+        {
+          p: [
+            `Appearances: ${props.appearances}`,
+            `Clean sheets: ${props.cleanSheets}`,
+            `Goals: ${props.goals || 0}`,
+            `Assists: ${props.assists || 0}`,
+          ],
+        },
+        {
+          h2: props.awards ? "Honours & Awards" : "",
+        },
+        ...Object.entries(props.awards || {})
+          .map(([key, awards]) => {
+            return [
+              {
+                h3: awardMap[key],
+              },
+              {
+                ul: awards.map((award: Award) => {
+                  return key.endsWith("MONTH")
+                    ? `${months[award.date.month - 1]} ${
+                        award.compSeason.label
+                      }`
+                    : award.compSeason.label;
+                }),
+              },
+            ];
+          })
+          .flat(),
       ])}
       metadata={
         <Detail.Metadata>
@@ -118,7 +174,7 @@ export default function Player(props: { club: Club }) {
             actions={
               <ActionPanel>
                 <Action.Push
-                  title="Show Details"
+                  title="View Player"
                   icon={Icon.Sidebar}
                   target={<PlayerProfile {...p} />}
                 />
