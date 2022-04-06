@@ -150,6 +150,12 @@ export default function Player(props: { club: Club }) {
         )
       }
     >
+      {props.club && (
+        <List.EmptyView
+          icon="empty.png"
+          title="We don't have any data on this club."
+        />
+      )}
       {player.players.map((p) => {
         return (
           <List.Item

@@ -9,6 +9,8 @@ const useClubs = (season: string) => {
   useEffect(() => {
     if (season) {
       setLoading(true);
+      setClubs([]);
+
       getClubs(season).then((data) => {
         setClubs(data);
         setLoading(false);

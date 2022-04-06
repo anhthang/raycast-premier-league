@@ -9,6 +9,8 @@ const useTables = (season: string) => {
   useEffect(() => {
     if (season) {
       setLoading(true);
+      setTables([]);
+
       getTables(season).then((data) => {
         setTables(data);
         setLoading(false);
