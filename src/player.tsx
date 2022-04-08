@@ -119,13 +119,13 @@ function PlayerProfile(props: PlayerContent) {
 export default function Player(props: { club: Club }) {
   const [teamId, setTeam] = useState<string>(props.club?.id.toString() ?? "-1");
 
-  const season = useSeasons();
-  const seasonId = season.seasons[0]?.id.toString();
-  const team = useTeams(seasonId);
+  const seasons = useSeasons();
+  const seasonId = seasons[0]?.id.toString();
+  const teams = useTeams(seasonId);
 
   const [page, setPage] = useState<number>(0);
 
-  const player = usePlayers(teamId, seasonId, page);
+  const players = usePlayers(teamId, seasonId, page);
 
   return (
     <List
@@ -133,11 +133,11 @@ export default function Player(props: { club: Club }) {
       navigationTitle={
         props.club ? `Squad | ${props.club.name} | Club` : "Players"
       }
-      isLoading={season.loading || player.loading}
+      isLoading={!players}
       searchBarAccessory={
         props.club ? undefined : (
           <List.Dropdown tooltip="Filter by Club" onChange={setTeam}>
-            {team.clubs.map((s) => {
+            {teams?.map((s) => {
               return (
                 <List.Dropdown.Item
                   key={s.value}
@@ -156,7 +156,7 @@ export default function Player(props: { club: Club }) {
           title="We don't have any data on this club."
         />
       )}
-      {player.players.map((p) => {
+      {players?.map((p) => {
         return (
           <List.Item
             key={p.id}
