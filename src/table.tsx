@@ -69,6 +69,32 @@ export default function GetTables() {
                 };
               }
 
+              const accessories: List.Item.Accessory[] = [
+                {
+                  text: {
+                    color: Color.PrimaryText,
+                    value: overall.points.toString(),
+                  },
+                  tooltip: "Points",
+                },
+                { icon, tooltip: `Previous Position: ${startingPosition}` },
+              ];
+
+              if (!showStats) {
+                accessories.unshift(
+                  {
+                    icon: Icon.SoccerBall,
+                    text: overall.played.toString(),
+                    tooltip: "Played",
+                  },
+                  {
+                    icon: Icon.Goal,
+                    text: `${overall.goalsFor} - ${overall.goalsAgainst}`,
+                    tooltip: "Goals For - Goals Against",
+                  }
+                );
+              }
+
               return (
                 <List.Item
                   key={position}
@@ -76,10 +102,10 @@ export default function GetTables() {
                   subtitle={team.name}
                   keywords={[team.name, team.shortName, team.club.abbr]}
                   icon={{
-                    source: `https://resources.premierleague.com/premierleague/badges/100/${team.altIds.opta}@x2.png`,
+                    source: `https://resources.premierleague.com/premierleague/badges/${team.altIds.opta}.png`,
                     fallback: "default.png",
                   }}
-                  accessories={[{ text: overall.points.toString() }, { icon }]}
+                  accessories={accessories}
                   detail={
                     <List.Item.Detail
                       metadata={
