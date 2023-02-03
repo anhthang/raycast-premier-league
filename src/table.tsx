@@ -93,6 +93,47 @@ export default function GetTables() {
                     tooltip: "Goals For - Goals Against",
                   }
                 );
+
+                if (Array.isArray(form)) {
+                  form.forEach((m) => {
+                    const isHome = m.teams[0].team.shortName === team.shortName;
+
+                    let isWinner;
+                    if (isHome) {
+                      isWinner = m.teams[0].score > m.teams[1].score;
+                    } else {
+                      isWinner = m.teams[0].score < m.teams[1].score;
+                    }
+
+                    let tintColor;
+                    if (m.outcome !== "D") {
+                      tintColor = isWinner ? Color.Green : Color.Red;
+                    } else {
+                      tintColor = Color.SecondaryText;
+                    }
+
+                    accessories.push({
+                      icon: {
+                        source: Icon.CircleFilled,
+                        tintColor,
+                      },
+                      tooltip: `${m.teams[0].team.shortName} ${m.teams[0].score} - ${m.teams[1].score} ${m.teams[1].team.shortName}`,
+                    });
+                  });
+                }
+
+                if (next) {
+                  const nextTeam = next.teams.find(
+                    (t) => t.team.shortName !== team.shortName
+                  );
+                  accessories.push({
+                    icon: {
+                      source: `https://resources.premierleague.com/premierleague/badges/${nextTeam?.team.altIds.opta}.png`,
+                      fallback: "default.png",
+                    },
+                    tooltip: convertToLocalTime(next.kickoff.label),
+                  });
+                }
               }
 
               return (
