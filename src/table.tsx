@@ -75,9 +75,9 @@ export default function GetTables() {
                     color: Color.PrimaryText,
                     value: overall.points.toString(),
                   },
-                  tooltip: "Points",
+                  icon,
+                  tooltip: `Previous Position: ${startingPosition}`,
                 },
-                { icon, tooltip: `Previous Position: ${startingPosition}` },
               ];
 
               if (!showStats) {
