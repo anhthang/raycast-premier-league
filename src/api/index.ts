@@ -33,10 +33,10 @@ function showFailureToast() {
   );
 }
 
-export const getSeasons = async () => {
+export const getSeasons = async (comps: string) => {
   const config: AxiosRequestConfig = {
     method: "GET",
-    url: `${endpoint}/competitions/1/compseasons`,
+    url: `${endpoint}/competitions/${comps}/compseasons`,
     params: {
       page: 0,
       pageSize: 100,
@@ -127,6 +127,7 @@ export const getFixtures = async (props: {
   page: number;
   sort: string;
   statuses: string;
+  comps: string;
 }): Promise<[Content[], boolean]> => {
   if (props.teams === "-1") {
     delete props.teams;
@@ -136,7 +137,6 @@ export const getFixtures = async (props: {
     method: "get",
     url: `${endpoint}/fixtures`,
     params: {
-      comps: 1,
       pageSize: 40,
       altIds: true,
       ...props,

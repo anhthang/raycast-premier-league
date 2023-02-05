@@ -1,11 +1,22 @@
-import { Action, ActionPanel, Icon, List } from "@raycast/api";
+import {
+  Action,
+  ActionPanel,
+  getPreferenceValues,
+  Icon,
+  List,
+} from "@raycast/api";
 import { useState } from "react";
 import groupBy from "lodash.groupby";
 import { useFixtures, useSeasons, useTeams } from "./hooks";
 import { convertToLocalTime } from "./utils";
+import SearchBarAccessory, { competitions } from "./components/searchbar";
+
+const { filter } = getPreferenceValues();
 
 export default function Fixture() {
-  const seasons = useSeasons();
+  const [comps, setCompetition] = useState<string>(competitions[0].value);
+
+  const seasons = useSeasons(comps);
   const clubs = useTeams(seasons[0]?.id.toString());
 
   const [page, setPage] = useState<number>(0);
@@ -16,6 +27,8 @@ export default function Fixture() {
     page,
     sort: "desc",
     statuses: "C",
+    comps,
+    compSeasons: seasons[0]?.id.toString(),
   });
 
   const categories = groupBy(fixtures, (f) =>
@@ -27,23 +40,20 @@ export default function Fixture() {
       throttle
       isLoading={!clubs || !fixtures}
       searchBarAccessory={
-        <List.Dropdown
-          tooltip="Filter by Club"
-          value={teams}
-          onChange={setTeams}
-        >
-          <List.Dropdown.Section>
-            {clubs?.map((club) => {
-              return (
-                <List.Dropdown.Item
-                  key={club.value}
-                  value={club.value}
-                  title={club.title}
-                />
-              );
-            })}
-          </List.Dropdown.Section>
-        </List.Dropdown>
+        filter === "competition" ? (
+          <SearchBarAccessory
+            type={filter}
+            selected={comps}
+            onSelect={setCompetition}
+          />
+        ) : (
+          <SearchBarAccessory
+            type={filter}
+            selected={teams}
+            onSelect={setTeams}
+            clubs={clubs}
+          />
+        )
       }
     >
       {Object.entries(categories).map(([label, matches]) => {
