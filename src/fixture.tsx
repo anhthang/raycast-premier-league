@@ -1,8 +1,10 @@
 import {
   Action,
   ActionPanel,
+  Color,
   getPreferenceValues,
   Icon,
+  Image,
   List,
 } from "@raycast/api";
 import { useState } from "react";
@@ -65,6 +67,32 @@ export default function Fixture() {
             {matches.map((match) => {
               const time = convertToLocalTime(match.kickoff.label, "HH:mm");
 
+              let icon: Image.ImageLike;
+              if (!match.kickoff.label) {
+                icon = {
+                  source: Icon.QuestionMarkCircle,
+                  tintColor: Color.Yellow,
+                };
+              } else if (match.status === "L") {
+                icon = { source: Icon.Livestream, tintColor: Color.Red };
+              } else {
+                icon = Icon.Clock;
+              }
+
+              const accessories: List.Item.Accessory[] = [
+                { text: `${match.ground.name}, ${match.ground.city}` },
+                { icon: "stadium.svg" },
+              ];
+
+              if (match.status === "L") {
+                accessories.unshift({
+                  tag: {
+                    value: match.clock?.label,
+                    color: Color.Red,
+                  },
+                });
+              }
+
               return (
                 <List.Item
                   key={match.id}
@@ -74,11 +102,8 @@ export default function Fixture() {
                       ? `${match.teams[0].team.name} ${match.teams[0].score} - ${match.teams[1].score} ${match.teams[1].team.name}`
                       : `${match.teams[0].team.name} - ${match.teams[1].team.name}`
                   }
-                  icon={Icon.Clock}
-                  accessories={[
-                    { text: `${match.ground.name}, ${match.ground.city}` },
-                    { icon: "stadium.svg" },
-                  ]}
+                  icon={icon}
+                  accessories={accessories}
                   actions={
                     <ActionPanel>
                       <Action.OpenInBrowser
