@@ -66,7 +66,10 @@ export const getClubs = async (compSeasons: string): Promise<TeamTeam[]> => {
       altIds: true,
       compSeasons,
     },
-    headers,
+    headers: {
+      ...headers,
+      account: "premierleague",
+    },
   };
 
   try {
