@@ -81,7 +81,12 @@ export default function Fixture() {
 
               const accessories: List.Item.Accessory[] = [
                 { text: `${match.ground.name}, ${match.ground.city}` },
-                { icon: "stadium.svg" },
+                {
+                  icon: {
+                    source: "stadium.svg",
+                    tintColor: Color.SecondaryText,
+                  },
+                },
               ];
 
               if (match.status === "L") {
