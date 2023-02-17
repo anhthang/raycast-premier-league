@@ -12,7 +12,7 @@
   "commands": [
     {
       "name": "table",
-      "title": "Standings",
+      "title": "Tables",
       "subtitle": "Premier League",
       "description": "View the latest Premier League tables, form guides and season archives.",
       "mode": "view"

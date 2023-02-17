@@ -1,17 +1,10 @@
-import {
-  Action,
-  ActionPanel,
-  Color,
-  getPreferenceValues,
-  Icon,
-  Image,
-  List,
-} from "@raycast/api";
+import { getPreferenceValues, List } from "@raycast/api";
 import { useState } from "react";
 import groupBy from "lodash.groupby";
 import { useFixtures, useSeasons, useTeams } from "./hooks";
 import { convertToLocalTime } from "./utils";
 import SearchBarAccessory, { competitions } from "./components/searchbar";
+import Matchday from "./components/matchday";
 
 const { filter } = getPreferenceValues();
 
@@ -33,8 +26,10 @@ export default function Fixture() {
     compSeasons: seasons[0]?.id.toString(),
   });
 
-  const categories = groupBy(fixtures, (f) =>
-    convertToLocalTime(f.kickoff.label, "EEE d MMM yyyy")
+  const matchday = groupBy(fixtures, (f) =>
+    f.kickoff.label
+      ? convertToLocalTime(f.kickoff.label, "EEE d MMM yyyy")
+      : "Date To Be Confirmed"
   );
 
   return (
@@ -58,77 +53,16 @@ export default function Fixture() {
         )
       }
     >
-      {Object.entries(categories).map(([label, matches]) => {
+      {Object.entries(matchday).map(([day, matches]) => {
         return (
-          <List.Section
-            key={label}
-            title={label === "undefined" ? "Date To Be Confirmed" : label}
-          >
-            {matches.map((match) => {
-              const time = convertToLocalTime(match.kickoff.label, "HH:mm");
-
-              let icon: Image.ImageLike;
-              if (!match.kickoff.label) {
-                icon = {
-                  source: Icon.QuestionMarkCircle,
-                  tintColor: Color.Yellow,
-                };
-              } else if (match.status === "L") {
-                icon = { source: Icon.Livestream, tintColor: Color.Red };
-              } else {
-                icon = Icon.Clock;
-              }
-
-              const accessories: List.Item.Accessory[] = [
-                { text: `${match.ground.name}, ${match.ground.city}` },
-                {
-                  icon: {
-                    source: "stadium.svg",
-                    tintColor: Color.SecondaryText,
-                  },
-                },
-              ];
-
-              if (match.status === "L") {
-                accessories.unshift({
-                  tag: {
-                    value: match.clock?.label,
-                    color: Color.Red,
-                  },
-                });
-              }
-
-              return (
-                <List.Item
-                  key={match.id}
-                  title={time || "TBC"}
-                  subtitle={
-                    match.status === "L"
-                      ? `${match.teams[0].team.name} ${match.teams[0].score} - ${match.teams[1].score} ${match.teams[1].team.name}`
-                      : `${match.teams[0].team.name} - ${match.teams[1].team.name}`
-                  }
-                  icon={icon}
-                  accessories={accessories}
-                  actions={
-                    <ActionPanel>
-                      <Action.OpenInBrowser
-                        url={`https://www.premierleague.com/match/${match.id}`}
-                      />
-                      {!lastPage && (
-                        <Action
-                          title="Load More"
-                          icon={Icon.MagnifyingGlass}
-                          onAction={() => {
-                            setPage(page + 1);
-                          }}
-                        />
-                      )}
-                    </ActionPanel>
-                  }
-                />
-              );
-            })}
-          </List.Section>
+          <Matchday
+            key={day}
+            matchday={day}
+            matches={matches}
+            page={page}
+            lastPage={lastPage}
+            onChangePage={setPage}
+          />
         );
       })}
     </List>
