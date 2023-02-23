@@ -1,10 +1,12 @@
 # Premier League Changelog
 
-## [Improvements] - 2023
-- Filter by Competition is default for Fixtures & Results
-- Live fixtures status
+## [Improvements] - 2023-02-21
+
+- Refine Fixtures & Results
+- Add more club information
 
 ## [Improvements] - 2023-02-03
+
 - Add more Standings details (played, goals for/against, form, next match)
 - Fix manager image size
 
