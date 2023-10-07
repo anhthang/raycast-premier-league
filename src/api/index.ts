@@ -29,7 +29,7 @@ function showFailureToast() {
   showToast(
     Toast.Style.Failure,
     "Something went wrong",
-    "Please try again later"
+    "Please try again later",
   );
 }
 
@@ -162,7 +162,7 @@ export const getFixtures = async (props: {
 export const getPlayers = async (
   teams: string,
   season: string,
-  page: number
+  page: number,
 ): Promise<PlayerResult> => {
   const params: { [key: string]: string | number | boolean } = {
     pageSize,
@@ -199,7 +199,7 @@ export const getPlayers = async (
 
 export const getStaffs = async (
   team: string,
-  season: string
+  season: string,
 ): Promise<PlayerResult> => {
   const config: AxiosRequestConfig = {
     method: "get",
@@ -254,7 +254,7 @@ export const getManagers = async (compSeasons: string) => {
 
 export const getPlayersWithTerms = async (
   terms: string,
-  page: number
+  page: number,
 ): Promise<PlayerResult> => {
   const config: AxiosRequestConfig = {
     method: "get",

@@ -36,6 +36,6 @@ export const convertToLocalTime = (label?: string, outputFormat?: string) => {
 
   return format(
     parse(time, inputFormat, new Date()),
-    outputFormat || "EEE d MMM yyyy, HH:mm"
+    outputFormat || "EEE d MMM yyyy, HH:mm",
   );
 };
