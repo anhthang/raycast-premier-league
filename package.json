@@ -84,13 +84,13 @@
   "devDependencies": {
     "@types/json2md": "^1.5.4",
     "@types/lodash.groupby": "^4.6.9",
-    "@types/node": "~20.10.1",
-    "@types/react": "^18.2.39",
+    "@types/node": "~20.10.3",
+    "@types/react": "^18.2.41",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
     "@typescript-eslint/parser": "^6.13.1",
-    "eslint": "^8.54.0",
-    "eslint-config-prettier": "^9.0.0",
-    "react-devtools": "^4.28.5",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "react-devtools": "^4.28.4",
     "typescript": "^5.3.2"
   },
   "scripts": {
