@@ -74,27 +74,28 @@
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.63.0",
-    "@raycast/utils": "^1.10.1",
-    "axios": "^1.6.2",
-    "date-fns": "^2.30.0",
-    "json2md": "^2.0.0",
+    "@raycast/api": "^1.71.3",
+    "@raycast/utils": "^1.14.0",
+    "axios": "^1.6.8",
+    "date-fns": "^3.6.0",
+    "json2md": "^2.0.1",
     "lodash.groupby": "^4.6.0"
   },
   "devDependencies": {
     "@types/json2md": "^1.5.4",
     "@types/lodash.groupby": "^4.6.9",
-    "@types/node": "~20.10.3",
-    "@types/react": "^18.2.41",
-    "@typescript-eslint/eslint-plugin": "^6.13.1",
-    "@typescript-eslint/parser": "^6.13.1",
-    "eslint": "^8.55.0",
+    "@types/node": "~20.12.7",
+    "@types/react": "^18.2.78",
+    "@typescript-eslint/eslint-plugin": "^7.6.0",
+    "@typescript-eslint/parser": "^7.6.0",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "react-devtools": "^4.28.4",
-    "typescript": "^5.3.2"
+    "react-devtools": "^5.0.2",
+    "typescript": "^5.4.5"
   },
   "scripts": {
     "build": "ray build -e dist",
     "dev": "ray develop"
-  }
+  },
+  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
 }

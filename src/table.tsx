@@ -39,6 +39,8 @@ export default function GetTables() {
       isShowingDetail={showStats}
     >
       {tables?.map((table) => {
+        const isEnded = table.entries.every((e) => e.overall.played === 38);
+
         return (
           <List.Section key={table.gameWeek}>
             {table.entries.map((entry) => {
@@ -57,16 +59,25 @@ export default function GetTables() {
                 tintColor: Color.SecondaryText,
               };
 
-              if (position < startingPosition) {
-                icon = {
-                  source: Icon.ChevronUpSmall,
-                  tintColor: Color.Green,
-                };
-              } else if (position > startingPosition) {
-                icon = {
-                  source: Icon.ChevronDownSmall,
-                  tintColor: Color.Red,
-                };
+              if (isEnded) {
+                if (position === 1) {
+                  icon = {
+                    source: Icon.Trophy,
+                    tintColor: Color.Orange,
+                  };
+                }
+              } else {
+                if (position < startingPosition) {
+                  icon = {
+                    source: Icon.ChevronUpSmall,
+                    tintColor: Color.Green,
+                  };
+                } else if (position > startingPosition) {
+                  icon = {
+                    source: Icon.ChevronDownSmall,
+                    tintColor: Color.Red,
+                  };
+                }
               }
 
               const accessories: List.Item.Accessory[] = [
