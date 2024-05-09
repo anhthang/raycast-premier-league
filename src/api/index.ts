@@ -102,6 +102,7 @@ export const getTables = async (seasonId: string): Promise<Table[]> => {
       altIds: true,
       detail: 2,
       FOOTBALL_COMPETITION: 1,
+      live: true,
     },
     headers,
   };

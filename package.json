@@ -57,7 +57,7 @@
     {
       "name": "filter",
       "title": "Search bar filter",
-      "description": "Choose your preffered filter in the search bar for Fixtures & Results",
+      "description": "Choose your preferred filter in the search bar for Fixtures & Results",
       "required": false,
       "type": "dropdown",
       "default": "competition",
