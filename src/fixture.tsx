@@ -1,32 +1,40 @@
 import { getPreferenceValues, List } from "@raycast/api";
-import { useState } from "react";
+import { usePromise } from "@raycast/utils";
 import groupBy from "lodash.groupby";
-import { useFixtures, useSeasons, useTeams } from "./hooks";
-import { convertToLocalTime } from "./utils";
-import SearchBarAccessory, { competitions } from "./components/searchbar";
+import { useState } from "react";
+import { getFixtures } from "./api";
 import Matchday from "./components/matchday";
+import SearchBarAccessory, { competitions } from "./components/searchbar";
+import { useSeasons, useTeams } from "./hooks";
+import { convertToLocalTime } from "./utils";
 
 const { filter } = getPreferenceValues();
 
 export default function Fixture() {
   const [comps, setCompetition] = useState<string>(competitions[0].value);
+  const [teams, setTeams] = useState<string>("-1");
 
   const seasons = useSeasons(comps);
   const clubs = useTeams(seasons[0]?.id.toString());
 
-  const [page, setPage] = useState<number>(0);
-  const [teams, setTeams] = useState<string>("-1");
+  const { isLoading, data, pagination } = usePromise(
+    (comps, teams) =>
+      async ({ page = 0 }) => {
+        const [data, hasMore] = await getFixtures({
+          teams,
+          page,
+          sort: "asc",
+          statuses: "U,L",
+          comps,
+          compSeasons: seasons[0]?.id.toString(),
+        });
 
-  const { fixtures, lastPage } = useFixtures({
-    teams,
-    page,
-    sort: "asc",
-    statuses: "U,L",
-    comps,
-    compSeasons: seasons[0]?.id.toString(),
-  });
+        return { data, hasMore };
+      },
+    [comps, teams],
+  );
 
-  const matchday = groupBy(fixtures, (f) =>
+  const matchday = groupBy(data, (f) =>
     f.kickoff.label
       ? convertToLocalTime(f.kickoff.label, "EEE d MMM yyyy")
       : "Date To Be Confirmed",
@@ -35,7 +43,8 @@ export default function Fixture() {
   return (
     <List
       throttle
-      isLoading={!fixtures}
+      isLoading={isLoading}
+      pagination={pagination}
       searchBarAccessory={
         filter === "competition" ? (
           <SearchBarAccessory
@@ -54,16 +63,7 @@ export default function Fixture() {
       }
     >
       {Object.entries(matchday).map(([day, matches]) => {
-        return (
-          <Matchday
-            key={day}
-            matchday={day}
-            matches={matches}
-            page={page}
-            lastPage={lastPage}
-            onChangePage={setPage}
-          />
-        );
+        return <Matchday key={day} matchday={day} matches={matches} />;
       })}
     </List>
   );

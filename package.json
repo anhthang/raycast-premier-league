@@ -74,28 +74,30 @@
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.71.3",
-    "@raycast/utils": "^1.14.0",
-    "axios": "^1.6.8",
-    "date-fns": "^3.6.0",
+    "@raycast/api": "^1.83.1",
+    "@raycast/utils": "^1.17.0",
+    "axios": "^1.7.7",
+    "date-fns": "^4.1.0",
     "json2md": "^2.0.1",
     "lodash.groupby": "^4.6.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.11.0",
+    "@raycast/eslint-config": "^1.0.11",
     "@types/json2md": "^1.5.4",
     "@types/lodash.groupby": "^4.6.9",
-    "@types/node": "~20.12.7",
-    "@types/react": "^18.2.78",
-    "@typescript-eslint/eslint-plugin": "^7.6.0",
-    "@typescript-eslint/parser": "^7.6.0",
-    "eslint": "^8.57.0",
+    "@types/node": "~22.5.5",
+    "@types/react": "^18.3.8",
+    "eslint": "^9.11.0",
     "eslint-config-prettier": "^9.1.0",
-    "react-devtools": "^5.0.2",
-    "typescript": "^5.4.5"
+    "eslint-plugin-react": "^7.36.1",
+    "prettier": "^3.3.3",
+    "react-devtools": "^5.2.0",
+    "typescript": "^5.6.2",
+    "typescript-eslint": "^8.6.0"
   },
   "scripts": {
     "build": "ray build -e dist",
     "dev": "ray develop"
-  },
-  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
+  }
 }

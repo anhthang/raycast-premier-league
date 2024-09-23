@@ -5,7 +5,7 @@
 
 View the latest Premier League tables, form guides and season archives in [Raycast](https://raycast.com/)
 
-![Example](./metadata/epl-01.png)
+![Example](./metadata/premier-league-1.png)
 
 ## Issues
 

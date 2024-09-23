@@ -1,7 +1,9 @@
-import { Action, ActionPanel, Detail, Icon, Grid } from "@raycast/api";
+import { Action, ActionPanel, Detail, Grid, Icon } from "@raycast/api";
+import { usePromise } from "@raycast/utils";
 import json2md from "json2md";
 import { useState } from "react";
-import { usePlayers, useSeasons, useTeams } from "./hooks";
+import { getPlayers, getPlayersWithTerms, getStaffs } from "./api";
+import { useSeasons, useTeams } from "./hooks";
 import { Award, Club, PlayerContent } from "./types";
 import { getFlagEmoji } from "./utils";
 
@@ -126,10 +128,25 @@ export default function Player(props: { club: Club }) {
   const seasonId = seasons[0]?.id.toString();
   const teams = useTeams(seasonId);
 
-  const [page, setPage] = useState<number>(0);
   const [terms, setTerms] = useState<string>("");
 
-  const { players, lastPage } = usePlayers(teamId, seasonId, page, terms);
+  const { isLoading, data, pagination } = usePromise(
+    (season, team, terms) =>
+      async ({ page = 0 }) => {
+        if (terms.length >= 3) {
+          return getPlayersWithTerms(terms, page);
+        } else if (team && season) {
+          if (team === "-1") {
+            return getPlayers(team, season, page);
+          } else {
+            return getStaffs(team, season);
+          }
+        }
+
+        return { data: [], hasMore: false };
+      },
+    [seasonId, teamId, terms],
+  );
 
   const listProps: Partial<Grid.Props> = props.club
     ? {
@@ -162,7 +179,7 @@ export default function Player(props: { club: Club }) {
   }
 
   return (
-    <Grid throttle isLoading={!players} {...listProps}>
+    <Grid throttle isLoading={isLoading} pagination={pagination} {...listProps}>
       {props.club && (
         <Grid.EmptyView
           icon="empty.png"
@@ -176,7 +193,7 @@ export default function Player(props: { club: Club }) {
         />
       )}
       {(!terms || terms.length >= 3) &&
-        players?.map((p) => {
+        data?.map((p) => {
           return (
             <Grid.Item
               key={p.id}
@@ -194,15 +211,6 @@ export default function Player(props: { club: Club }) {
                     icon={Icon.Sidebar}
                     target={<PlayerProfile {...p} />}
                   />
-                  {!lastPage && (
-                    <Action
-                      title="Next Page"
-                      icon={Icon.ArrowRight}
-                      onAction={() => {
-                        setPage(page + 1);
-                      }}
-                    />
-                  )}
                 </ActionPanel>
               }
             />
