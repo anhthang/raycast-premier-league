@@ -40,7 +40,7 @@ function PlayerProfile(props: PlayerContent) {
 
 export default function Manager() {
   const { data: seasons = [] } = usePromise(getSeasons);
-  const seasonId = useMemo(() => seasons[0]?.id.toString(), [seasons])
+  const seasonId = useMemo(() => seasons[0]?.id.toString(), [seasons]);
 
   const { data: managers, isLoading } = usePromise(getManagers, [seasonId]);
 

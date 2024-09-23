@@ -7,12 +7,15 @@ import { convertToLocalTime } from "./utils";
 export default function GetTables() {
   const { data: seasons = [] } = usePromise(getSeasons);
 
-  const [selectedSeason, setSeason] = useState<string>(
-    seasons[0]?.id.toString(),
-  );
+  const [seasonId, setSeasonId] = useState<string>(seasons[0]?.id.toString());
   const [showStats, setShowStats] = useState<boolean>(false);
 
-  const { data: tables, isLoading } = usePromise(getTables, [selectedSeason]);
+  const { data: tables, isLoading } = usePromise(
+    async (season) => {
+      return season ? await getTables(season) : [];
+    },
+    [seasonId],
+  );
 
   return (
     <List
@@ -20,8 +23,8 @@ export default function GetTables() {
       searchBarAccessory={
         <List.Dropdown
           tooltip="Filter by Season"
-          value={selectedSeason}
-          onChange={setSeason}
+          value={seasonId}
+          onChange={setSeasonId}
         >
           <List.Dropdown.Section>
             {seasons.map((season) => {

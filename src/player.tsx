@@ -1,7 +1,7 @@
 import { Action, ActionPanel, Detail, Grid, Icon } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import json2md from "json2md";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   getPlayers,
   getPlayersWithTerms,
@@ -131,8 +131,14 @@ export default function Player(props: { club: Club }) {
 
   const { data: seasons = [] } = usePromise(getSeasons);
 
-  const seasonId = seasons[0]?.id.toString();
-  const { data: teams } = usePromise(() => getTeams(seasonId));
+  const compSeasons = useMemo(() => seasons[0]?.id.toString(), [seasons]);
+
+  const { data: teams } = usePromise(
+    async (season) => {
+      return season ? await getTeams(season) : [];
+    },
+    [compSeasons],
+  );
 
   const [terms, setTerms] = useState<string>("");
 
@@ -151,7 +157,7 @@ export default function Player(props: { club: Club }) {
 
         return { data: [], hasMore: false };
       },
-    [seasonId, teamId, terms],
+    [compSeasons, teamId, terms],
   );
 
   const listProps: Partial<Grid.Props> = props.club

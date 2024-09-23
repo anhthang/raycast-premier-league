@@ -1,7 +1,7 @@
 import { getPreferenceValues, List } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import groupBy from "lodash.groupby";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { getFixtures, getSeasons, getTeams } from "./api";
 import Matchday from "./components/matchday";
 import SearchBarAccessory, { competitions } from "./components/searchbar";
@@ -18,7 +18,14 @@ export default function Fixture() {
     [comps],
   );
 
-  const { data: clubs } = usePromise(() => getTeams(seasons[0]?.id.toString()));
+  const compSeasons = useMemo(() => seasons[0]?.id.toString(), [seasons]);
+
+  const { data: clubs } = usePromise(
+    async (season) => {
+      return season ? await getTeams(season) : [];
+    },
+    [compSeasons],
+  );
 
   const { isLoading, data, pagination } = usePromise(
     (comps, teams) =>
