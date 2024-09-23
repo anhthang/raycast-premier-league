@@ -2,8 +2,13 @@ import { Action, ActionPanel, Detail, Grid, Icon } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import json2md from "json2md";
 import { useState } from "react";
-import { getPlayers, getPlayersWithTerms, getStaffs } from "./api";
-import { useSeasons, useTeams } from "./hooks";
+import {
+  getPlayers,
+  getPlayersWithTerms,
+  getSeasons,
+  getStaffs,
+  getTeams,
+} from "./api";
 import { Award, Club, PlayerContent } from "./types";
 import { getFlagEmoji } from "./utils";
 
@@ -124,9 +129,10 @@ function PlayerProfile(props: PlayerContent) {
 export default function Player(props: { club: Club }) {
   const [teamId, setTeam] = useState<string>(props.club?.id.toString() ?? "-1");
 
-  const seasons = useSeasons();
+  const { data: seasons = [] } = usePromise(getSeasons);
+
   const seasonId = seasons[0]?.id.toString();
-  const teams = useTeams(seasonId);
+  const { data: teams } = usePromise(() => getTeams(seasonId));
 
   const [terms, setTerms] = useState<string>("");
 

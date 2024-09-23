@@ -2,10 +2,9 @@ import { getPreferenceValues, List } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import groupBy from "lodash.groupby";
 import { useState } from "react";
-import { getFixtures } from "./api";
+import { getFixtures, getSeasons, getTeams } from "./api";
 import Matchday from "./components/matchday";
 import SearchBarAccessory, { competitions } from "./components/searchbar";
-import { useSeasons, useTeams } from "./hooks";
 import { convertToLocalTime } from "./utils";
 
 const { filter } = getPreferenceValues();
@@ -14,8 +13,12 @@ export default function Fixture() {
   const [comps, setCompetition] = useState<string>(competitions[0].value);
   const [teams, setTeams] = useState<string>("-1");
 
-  const seasons = useSeasons(comps);
-  const clubs = useTeams(seasons[0]?.id.toString());
+  const { data: seasons = [] } = usePromise(
+    (comp) => getSeasons(comp),
+    [comps],
+  );
+
+  const { data: clubs } = usePromise(() => getTeams(seasons[0]?.id.toString()));
 
   const { isLoading, data, pagination } = usePromise(
     (comps, teams) =>

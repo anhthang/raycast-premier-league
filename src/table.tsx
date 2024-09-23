@@ -1,17 +1,18 @@
-import { Action, ActionPanel, List, Icon, Image, Color } from "@raycast/api";
+import { Action, ActionPanel, Color, Icon, Image, List } from "@raycast/api";
+import { usePromise } from "@raycast/utils";
 import { useState } from "react";
-import { useSeasons, useTables } from "./hooks";
+import { getSeasons, getTables } from "./api";
 import { convertToLocalTime } from "./utils";
 
 export default function GetTables() {
-  const seasons = useSeasons();
+  const { data: seasons = [] } = usePromise(getSeasons);
 
   const [selectedSeason, setSeason] = useState<string>(
     seasons[0]?.id.toString(),
   );
   const [showStats, setShowStats] = useState<boolean>(false);
 
-  const tables = useTables(selectedSeason);
+  const { data: tables, isLoading } = usePromise(getTables, [selectedSeason]);
 
   return (
     <List
@@ -35,7 +36,7 @@ export default function GetTables() {
           </List.Dropdown.Section>
         </List.Dropdown>
       }
-      isLoading={!tables}
+      isLoading={isLoading}
       isShowingDetail={showStats}
     >
       {tables?.map((table) => {

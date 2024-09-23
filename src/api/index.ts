@@ -25,7 +25,9 @@ interface PlayerResult {
   hasMore: boolean;
 }
 
-export const getSeasons = async (comps: string) => {
+export const getSeasons = async (
+  comps: string = "1",
+): Promise<{ label: string; id: number }[]> => {
   const config: AxiosRequestConfig = {
     method: "GET",
     url: `${endpoint}/competitions/${comps}/compseasons`,
@@ -75,7 +77,9 @@ export const getClubs = async (compSeasons: string): Promise<TeamTeam[]> => {
   }
 };
 
-export const getTeams = async (season: string) => {
+export const getTeams = async (
+  season: string,
+): Promise<{ title: string; value: string }[]> => {
   const config: AxiosRequestConfig = {
     method: "GET",
     url: `${endpoint}/compseasons/${season}/teams`,
@@ -85,7 +89,17 @@ export const getTeams = async (season: string) => {
   try {
     const { data }: AxiosResponse<TeamTeam[]> = await axios(config);
 
-    return data;
+    const teams = data.map((team) => ({
+      title: team.name,
+      value: team.id.toString(),
+    }));
+
+    teams.unshift({
+      title: "All Clubs",
+      value: "-1",
+    });
+
+    return teams;
   } catch (e) {
     showFailureToast(e);
 
