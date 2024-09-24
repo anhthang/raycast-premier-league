@@ -8,7 +8,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 type ExtensionPreferences = {
-  /** Search bar filter - Choose your preferred filter in the search bar for Fixtures & Results */
+  /** Search Bar Filter - Select your preferred filtering method in the search bar for Fixtures & Results. */
   "filter": "competition" | "club"
 }
 
