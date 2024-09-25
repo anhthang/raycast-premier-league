@@ -205,31 +205,29 @@ export default function Player(props: { club: Club }) {
               key={position}
               title={`${position.charAt(0).toUpperCase()}${position.slice(1).toLowerCase()}`}
             >
-              {
-                players.map((player) => {
-                  return (
-                    <Grid.Item
-                      key={player.id}
-                      title={player.name.display}
-                      subtitle={player.info.positionInfo}
-                      keywords={[player.info.positionInfo]}
-                      content={{
-                        source: getProfileImg(player.altIds.opta),
-                        fallback: "player-missing.png",
-                      }}
-                      actions={
-                        <ActionPanel>
-                          <Action.Push
-                            title="View Player"
-                            icon={Icon.Sidebar}
-                            target={<PlayerProfile {...player} />}
-                          />
-                        </ActionPanel>
-                      }
-                    />
-                  );
-                })
-              }
+              {players.map((player) => {
+                return (
+                  <Grid.Item
+                    key={player.id}
+                    title={player.name.display}
+                    subtitle={player.info.positionInfo}
+                    keywords={[player.info.positionInfo]}
+                    content={{
+                      source: getProfileImg(player.altIds.opta),
+                      fallback: "player-missing.png",
+                    }}
+                    actions={
+                      <ActionPanel>
+                        <Action.Push
+                          title="View Player"
+                          icon={Icon.Sidebar}
+                          target={<PlayerProfile {...player} />}
+                        />
+                      </ActionPanel>
+                    }
+                  />
+                );
+              })}
             </Grid.Section>
           );
         })}

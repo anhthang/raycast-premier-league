@@ -71,11 +71,9 @@ export default function GetTables() {
                 annotations,
               } = entry;
 
-              let icon: Image.ImageLike = {
-                source: Icon.Dot,
-                tintColor: Color.SecondaryText,
-              };
+              let icon: Image.ImageLike | undefined;
 
+              let accessories: List.Item.Accessory[];
               if (isEnded) {
                 if (position === 1) {
                   icon = {
@@ -83,6 +81,16 @@ export default function GetTables() {
                     tintColor: Color.Orange,
                   };
                 }
+
+                accessories = [
+                  {
+                    text: {
+                      color: Color.PrimaryText,
+                      value: overall.points.toString(),
+                    },
+                    icon,
+                  },
+                ];
               } else {
                 if (position < startingPosition) {
                   icon = {
@@ -94,21 +102,25 @@ export default function GetTables() {
                     source: Icon.ChevronDownSmall,
                     tintColor: Color.Red,
                   };
+                } else {
+                  icon = {
+                    source: Icon.Dot,
+                  };
                 }
-              }
 
-              const accessories: List.Item.Accessory[] = [
-                {
-                  text: {
-                    color: Color.PrimaryText,
-                    value: overall.points.toString(),
+                accessories = [
+                  {
+                    text: {
+                      color: Color.PrimaryText,
+                      value: overall.points.toString(),
+                    },
                   },
-                },
-                {
-                  icon,
-                  tooltip: `Previous Position: ${startingPosition}`,
-                },
-              ];
+                  {
+                    icon,
+                    tooltip: `Previous Position: ${startingPosition}`,
+                  },
+                ];
+              }
 
               return (
                 <List.Item
