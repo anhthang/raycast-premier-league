@@ -1,7 +1,8 @@
 import { Color, Icon, Image, List } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { useState } from "react";
-import { getSeasons, getTables } from "./api";
+import { getTables } from "./api";
+import SearchBarSeason from "./components/searchbar_season";
 import { convertToLocalTime, getClubLogo } from "./utils";
 
 const qualificationMap: Record<string, string> = {
@@ -19,9 +20,7 @@ const qualificationColor: Record<string, string> = {
 };
 
 export default function GetTables() {
-  const { data: seasons = [] } = usePromise(getSeasons);
-
-  const [seasonId, setSeasonId] = useState<string>(seasons[0]?.id.toString());
+  const [seasonId, setSeasonId] = useState<string>();
 
   const { data: tables, isLoading } = usePromise(
     async (season) => {
@@ -34,23 +33,7 @@ export default function GetTables() {
     <List
       throttle
       searchBarAccessory={
-        <List.Dropdown
-          tooltip="Filter by Season"
-          value={seasonId}
-          onChange={setSeasonId}
-        >
-          <List.Dropdown.Section>
-            {seasons.map((season) => {
-              return (
-                <List.Dropdown.Item
-                  key={season.id}
-                  value={season.id.toString()}
-                  title={season.label}
-                />
-              );
-            })}
-          </List.Dropdown.Section>
-        </List.Dropdown>
+        <SearchBarSeason selected={seasonId} onSelect={setSeasonId} />
       }
       isLoading={isLoading}
       isShowingDetail={true}
@@ -78,7 +61,7 @@ export default function GetTables() {
                 if (position === 1) {
                   icon = {
                     source: Icon.Trophy,
-                    tintColor: Color.Orange,
+                    tintColor: Color.Green,
                   };
                 }
 

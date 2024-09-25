@@ -4,7 +4,9 @@ import groupBy from "lodash.groupby";
 import { useMemo, useState } from "react";
 import { getFixtures, getSeasons, getTeams } from "./api";
 import Matchday from "./components/matchday";
-import SearchBarAccessory, { competitions } from "./components/searchbar";
+import SearchBarCompetition, {
+  competitions,
+} from "./components/searchbar_competition";
 import { convertToLocalTime } from "./utils";
 
 const { filter } = getPreferenceValues();
@@ -28,7 +30,7 @@ export default function Fixture() {
   );
 
   const { isLoading, data, pagination } = usePromise(
-    (comps, teams) =>
+    (comps, teams, compSeasons) =>
       async ({ page = 0 }) => {
         const [data, hasMore] = await getFixtures({
           teams,
@@ -36,12 +38,12 @@ export default function Fixture() {
           sort: "desc",
           statuses: "C",
           comps,
-          compSeasons: seasons[0]?.id.toString(),
+          compSeasons,
         });
 
         return { data, hasMore };
       },
-    [comps, teams],
+    [comps, teams, compSeasons],
   );
 
   const matchday = groupBy(data, (f) =>
@@ -54,20 +56,12 @@ export default function Fixture() {
       isLoading={!clubs || isLoading}
       pagination={pagination}
       searchBarAccessory={
-        filter === "competition" ? (
-          <SearchBarAccessory
-            type={filter}
-            selected={comps}
-            onSelect={setCompetition}
-          />
-        ) : (
-          <SearchBarAccessory
-            type={filter}
-            selected={teams}
-            onSelect={setTeams}
-            clubs={clubs}
-          />
-        )
+        <SearchBarCompetition
+          type={filter}
+          selected={teams}
+          onSelect={filter === "competition" ? setCompetition : setTeams}
+          data={filter === "competition" ? competitions : clubs || []}
+        />
       }
     >
       {Object.entries(matchday).map(([day, matches]) => {

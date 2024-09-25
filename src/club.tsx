@@ -2,7 +2,8 @@ import { Action, ActionPanel, Detail, Grid, Icon } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import json2md from "json2md";
 import { useState } from "react";
-import { getClubs, getSeasons } from "./api";
+import { getClubs } from "./api";
+import SearchBarSeason from "./components/searchbar_season";
 import Player from "./player";
 import { TeamTeam } from "./types";
 import { getClubLogo } from "./utils";
@@ -78,37 +79,20 @@ function ClubProfile(props: TeamTeam) {
 }
 
 export default function Club() {
-  const { data: seasons = [] } = usePromise(getSeasons);
+  const [seasonId, setSeasonId] = useState<string>();
 
-  const [selectedSeason, setSeason] = useState<string>(
-    seasons[0]?.id.toString(),
+  const { data: clubs, isLoading } = usePromise(
+    async (season) => (season ? await getClubs(season) : undefined),
+    [seasonId],
   );
-
-  const { data: clubs, isLoading } = usePromise(getClubs, [selectedSeason]);
 
   return (
     <Grid
       throttle
       isLoading={isLoading}
-      inset={Grid.Inset.Medium}
+      inset={Grid.Inset.Small}
       searchBarAccessory={
-        <Grid.Dropdown
-          tooltip="Filter by Season"
-          value={selectedSeason}
-          onChange={setSeason}
-        >
-          <Grid.Dropdown.Section>
-            {seasons.map((season) => {
-              return (
-                <Grid.Dropdown.Item
-                  key={season.id}
-                  value={season.id.toString()}
-                  title={season.label}
-                />
-              );
-            })}
-          </Grid.Dropdown.Section>
-        </Grid.Dropdown>
+        <SearchBarSeason selected={seasonId} onSelect={setSeasonId} />
       }
     >
       {clubs?.map((team) => {

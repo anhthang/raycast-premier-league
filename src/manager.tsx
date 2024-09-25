@@ -1,8 +1,9 @@
 import { Action, ActionPanel, Detail, Grid, Icon } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import json2md from "json2md";
-import { useMemo } from "react";
-import { getManagers, getSeasons } from "./api";
+import { useState } from "react";
+import { getManagers } from "./api";
+import SearchBarSeason from "./components/searchbar_season";
 import { PlayerContent } from "./types";
 import { getProfileImg } from "./utils";
 
@@ -40,13 +41,21 @@ function PlayerProfile(props: PlayerContent) {
 }
 
 export default function Manager() {
-  const { data: seasons = [] } = usePromise(getSeasons);
-  const seasonId = useMemo(() => seasons[0]?.id.toString(), [seasons]);
+  const [seasonId, setSeasonId] = useState<string>();
 
-  const { data: managers, isLoading } = usePromise(getManagers, [seasonId]);
+  const { data: managers, isLoading } = usePromise(
+    async (season) => (season ? await getManagers(season) : undefined),
+    [seasonId],
+  );
 
   return (
-    <Grid throttle isLoading={isLoading}>
+    <Grid
+      throttle
+      isLoading={isLoading}
+      searchBarAccessory={
+        <SearchBarSeason selected={seasonId} onSelect={setSeasonId} />
+      }
+    >
       {managers?.map((p) => {
         return (
           <Grid.Item
