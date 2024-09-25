@@ -2,9 +2,11 @@
   <h1 align="center">Premier League</h1>
 </p>
 
-**Premier League** is an extension designed to provide comprehensive information and statistics about the English Premier League in [Raycast](https://raycast.com/). It offers a user-friendly interface to explore data on teams, players, matches, and standings.
+Get instant access to Premier League data right from your Raycast menu. Easily search for teams, players, fixtures, results, and standings.
 
 ![Example](./metadata/premier-league-1.png)
+
+**Premier League** is an extension designed to provide comprehensive information and statistics about the English Premier League in [Raycast](https://raycast.com/). It offers a user-friendly interface to explore data on teams, players, matches, and standings.
 
 ### Features
 

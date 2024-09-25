@@ -1,5 +1,8 @@
 # Premier League Changelog
 
+## [Enhanced Standings] - {RELEASE_DATE}
+- Updated standings to always show detailed statistics, including points, goal difference, and head-to-head records.
+
 ## [Seamless Pagination] - 2024-09-24
 - Incorporated the usePromise utility for seamless pagination, providing a more efficient and user-friendly experience.
 

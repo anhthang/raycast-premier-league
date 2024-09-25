@@ -215,7 +215,7 @@ export interface TeamTeam {
   shortName: string;
   id: number;
   altIds: AltIDS;
-  metadata: {
+  metadata?: {
     communities_twitter: string;
     club_highlights_internal_url: string;
     club_highlights_internal_description: string;
