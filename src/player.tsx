@@ -10,19 +10,8 @@ import {
   getStaffs,
   getTeams,
 } from "./api";
-import { Award, Club, PlayerContent } from "./types";
-import { getFlagEmoji } from "./utils";
-
-const awardMap: Record<string, string> = {
-  GOLDEN_GLOVE: "Golden Glove",
-  CHAMPIONS: "Premier League Champion",
-  PLAYER_OF_THE_MONTH: "Player of the Month",
-  GOAL_OF_THE_MONTH: "Goal of the Month",
-  GOLDEN_BOOT: "Golden Boot",
-  PLAYER_OF_THE_SEASON: "Player of the Season",
-  SAVE_OF_THE_MONTH: "Save of the Month",
-  MANAGER_OF_THE_MONTH: "Manager of the Month",
-};
+import { Club, PlayerAward, PlayerContent } from "./types";
+import { awardMap, getFlagEmoji, getProfileImg } from "./utils";
 
 const months = [
   "January",
@@ -47,7 +36,7 @@ function PlayerProfile(props: PlayerContent) {
         { h1: props.name.display },
         {
           img: {
-            source: `https://resources.premierleague.com/premierleague/photos/players/250x250/${props.altIds.opta}.png`,
+            source: getProfileImg(props.altIds.opta),
           },
         },
         {
@@ -71,7 +60,7 @@ function PlayerProfile(props: PlayerContent) {
                 h3: awardMap[key] || key,
               },
               {
-                ul: awards.map((award: Award) => {
+                ul: awards.map((award: PlayerAward) => {
                   return key.endsWith("MONTH")
                     ? `${months[award.date.month - 1]} ${
                         award.compSeason.label
@@ -151,7 +140,8 @@ export default function Player(props: { club: Club }) {
         } else if (team && season) {
           if (team === "-1") {
             return getPlayers(team, season, page);
-          } else {
+          } else if (!page) {
+            // prevent duplicate data when going back to club squads from player profile
             return getStaffs(team, season);
           }
         }
@@ -215,29 +205,31 @@ export default function Player(props: { club: Club }) {
               key={position}
               title={`${position.charAt(0).toUpperCase()}${position.slice(1).toLowerCase()}`}
             >
-              {players.map((player) => {
-                return (
-                  <Grid.Item
-                    key={player.id}
-                    title={player.name.display}
-                    subtitle={player.info.positionInfo}
-                    keywords={[player.info.positionInfo]}
-                    content={{
-                      source: `https://resources.premierleague.com/premierleague/photos/players/250x250/${player.altIds.opta}.png`,
-                      fallback: "player-missing.png",
-                    }}
-                    actions={
-                      <ActionPanel>
-                        <Action.Push
-                          title="View Player"
-                          icon={Icon.Sidebar}
-                          target={<PlayerProfile {...player} />}
-                        />
-                      </ActionPanel>
-                    }
-                  />
-                );
-              })}
+              {
+                players.map((player) => {
+                  return (
+                    <Grid.Item
+                      key={player.id}
+                      title={player.name.display}
+                      subtitle={player.info.positionInfo}
+                      keywords={[player.info.positionInfo]}
+                      content={{
+                        source: getProfileImg(player.altIds.opta),
+                        fallback: "player-missing.png",
+                      }}
+                      actions={
+                        <ActionPanel>
+                          <Action.Push
+                            title="View Player"
+                            icon={Icon.Sidebar}
+                            target={<PlayerProfile {...player} />}
+                          />
+                        </ActionPanel>
+                      }
+                    />
+                  );
+                })
+              }
             </Grid.Section>
           );
         })}

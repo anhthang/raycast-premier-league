@@ -2,7 +2,7 @@ import { Color, Icon, Image, List } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { useState } from "react";
 import { getSeasons, getTables } from "./api";
-import { convertToLocalTime } from "./utils";
+import { convertToLocalTime, getClubLogo } from "./utils";
 
 const qualificationMap: Record<string, string> = {
   EU_CL: "UEFA Champions League",
@@ -117,7 +117,7 @@ export default function GetTables() {
                   subtitle={team.name}
                   keywords={[team.name, team.shortName, team.club.abbr]}
                   icon={{
-                    source: `https://resources.premierleague.com/premierleague/badges/${team.altIds.opta}.png`,
+                    source: getClubLogo(team.altIds.opta),
                     fallback: "default.png",
                   }}
                   accessories={accessories}

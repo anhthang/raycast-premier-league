@@ -13,6 +13,12 @@ export interface EPLPlayer {
   content: PlayerContent[];
 }
 
+export interface EPLAward {
+  compSeason: CompSeason;
+  seasonAwards: Award[];
+  monthAwards: Record<string, Award[]>;
+}
+
 export interface EPLStaff {
   compSeason: CompSeason;
   team: TeamTeam;
@@ -28,6 +34,32 @@ export interface EPLStanding {
   tables: Table[];
 }
 
+export interface Award {
+  official?: Official;
+  award: string;
+  awardTypeId: number;
+  relatedContent: RelatedContent[];
+  player?: PlayerContent;
+  apiTeam?: TeamTeam;
+}
+
+export interface RelatedContent {
+  type: string;
+  reference: string;
+}
+
+export interface Official {
+  officialId: number;
+  role: string;
+  currentTeam: TeamTeam;
+  active: boolean;
+  birth: Birth;
+  age: string;
+  name: Name;
+  id: number;
+  altIds: AltIDS;
+}
+
 export interface Content {
   gameweek: Gameweek;
   kickoff: Kickoff;
@@ -36,12 +68,12 @@ export interface Content {
   replay: boolean;
   ground: Ground;
   neutralGround: boolean;
-  status: Status;
-  phase: Phase;
-  outcome: Outcome;
+  status: string;
+  phase: string;
+  outcome: string;
   attendance?: number;
   clock?: Clock;
-  fixtureType: FixtureType;
+  fixtureType: string;
   extraTime: boolean;
   shootout: boolean;
   goals: Goal[];
@@ -94,10 +126,6 @@ export interface Clock {
   label: string;
 }
 
-export enum FixtureType {
-  Regular = "REGULAR",
-}
-
 export interface Gameweek {
   id: number;
   compSeason: CompSeason;
@@ -106,59 +134,33 @@ export interface Gameweek {
 }
 
 export interface CompSeason {
-  label: Label;
+  label: string;
   competition: Competition;
   id: number;
 }
 
 export interface Competition {
-  abbreviation: Abbreviation;
-  description: CompetitionDescription;
-  level: Level;
+  abbreviation: string;
+  description: string;
+  level: string;
   source: string;
   id: number;
   altIds: AltIDS;
 }
 
-export enum Abbreviation {
-  EnPR = "EN_PR",
-}
-
-export enum CompetitionDescription {
-  PremierLeague = "Premier League",
-}
-
-export enum Level {
-  Sen = "SEN",
-}
-
-export enum Label {
-  The202122 = "2021/22",
-}
-
 export interface CompetitionPhase {
   id: number;
-  type: Type;
+  type: string;
   gameweekRange: number[];
-}
-
-export enum Type {
-  L = "L",
 }
 
 export interface Goal {
   personId: number;
   clock: Clock;
   phase: string;
-  type: TypeEnum;
-  description: TypeEnum;
+  type: string;
+  description: string;
   assistId?: number;
-}
-
-export enum TypeEnum {
-  G = "G",
-  O = "O",
-  P = "P",
 }
 
 export interface Ground {
@@ -166,7 +168,7 @@ export interface Ground {
   city: string;
   capacity?: number;
   location?: Location;
-  source: Source;
+  source: string;
   id: number;
 }
 
@@ -175,31 +177,11 @@ export interface Location {
   longitude: number;
 }
 
-export enum Source {
-  Opta = "OPTA",
-}
-
 export interface Kickoff {
   completeness: number;
   millis?: number;
   label?: string;
   gmtOffset?: number;
-}
-
-export enum Outcome {
-  A = "A",
-  D = "D",
-  H = "H",
-}
-
-export enum Phase {
-  F = "F",
-}
-
-export enum Status {
-  C = "C",
-  L = "L",
-  U = "U",
 }
 
 export interface TeamElement {
@@ -210,7 +192,7 @@ export interface TeamElement {
 export interface TeamTeam {
   name: string;
   club: Club;
-  teamType: TeamType;
+  teamType: string;
   grounds: Ground[];
   shortName: string;
   id: number;
@@ -233,10 +215,6 @@ export interface Club {
   id: number;
 }
 
-export enum TeamType {
-  First = "FIRST",
-}
-
 export interface PageInfo {
   page: number;
   numPages: number;
@@ -255,7 +233,7 @@ export interface PlayerContent {
   altIds: AltIDS;
   appearances: number;
   assists?: number;
-  awards?: Awards;
+  awards?: Record<string, PlayerAward[]>;
   birth: Birth;
   cleanSheets: number;
   currentTeam?: TeamTeam;
@@ -267,7 +245,7 @@ export interface PlayerContent {
   info: Info;
   joinDate?: Timestamp;
   keyPasses?: number;
-  latestPosition: LatestPosition;
+  latestPosition: string;
   // leaveDate: null;
   // metadata: null;
   name: Name;
@@ -294,17 +272,10 @@ export interface NationalTeam {
 }
 
 export interface Info {
-  position: Position;
+  position: string;
   shirtNum?: number;
   positionInfo: string;
   loan?: boolean;
-}
-
-export enum Position {
-  D = "Defender",
-  F = "Forward",
-  G = "Goalkeeper",
-  M = "Midfielder",
 }
 
 export interface Name {
@@ -314,24 +285,10 @@ export interface Name {
   middle?: string;
 }
 
-export interface Awards {
-  GOLDEN_GLOVE?: Award[];
-  CHAMPIONS?: Award[];
-  PLAYER_OF_THE_MONTH?: Award[];
-  GOAL_OF_THE_MONTH?: Award[];
-  GOLDEN_BOOT?: Award[];
-  PLAYER_OF_THE_SEASON?: Award[];
-}
-
-export interface Award {
+export interface PlayerAward {
   date: CHAMPIONDate;
-  compSeason: CHAMPIONCompSeason;
+  compSeason: CompSeason;
   notes?: string;
-}
-
-export interface CHAMPIONCompSeason {
-  label: string;
-  id: number;
 }
 
 export interface CHAMPIONDate {
@@ -340,15 +297,8 @@ export interface CHAMPIONDate {
   day: number;
 }
 
-export enum LatestPosition {
-  Defender = "DEFENDER",
-  Forward = "FORWARD",
-  Goalkeeper = "GOALKEEPER",
-  Midfielder = "MIDFIELDER",
-}
-
 export interface EPLPlayerSearch {
-  status: Status;
+  status: string;
   hits: Hits;
 }
 

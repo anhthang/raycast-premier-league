@@ -2,7 +2,7 @@
   <h1 align="center">Premier League</h1>
 </p>
 
-Get instant access to Premier League data right from your Raycast menu. Easily search for teams, players, fixtures, results, and standings.
+Get instant access to Premier League data right from your Raycast menu. Easily search for teams, players, fixtures, results, standings and awards.
 
 ![Example](./metadata/premier-league-1.png)
 
@@ -12,9 +12,10 @@ Get instant access to Premier League data right from your Raycast menu. Easily s
 
 * **Standings:** View the current league table, including points, goal difference, and form.
 * **Fixtures and Results:** Access upcoming and past match fixtures, results, and match details.
-* **Teams:** Explore individual team profiles with information on players, managers, and recent performance.
+* **Clubs:** Explore individual team profiles with information on players, managers, and recent performance.
 * **Players:** Search for player profiles, including statistics, career highlights, and transfer history.
 * **Managers:** View manager profiles with information on teams managed and career achievements.
+* **Awards:** View a list of individual and team awards, including winners and statistics.
 
 ## Issues
 

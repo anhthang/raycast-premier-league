@@ -5,6 +5,7 @@ import { useState } from "react";
 import { getClubs, getSeasons } from "./api";
 import Player from "./player";
 import { TeamTeam } from "./types";
+import { getClubLogo } from "./utils";
 
 function ClubProfile(props: TeamTeam) {
   const { metadata } = props;
@@ -15,7 +16,7 @@ function ClubProfile(props: TeamTeam) {
         { h1: props.name },
         {
           img: {
-            source: `https://resources.premierleague.com/premierleague/badges/${props.altIds.opta}.png`,
+            source: getClubLogo(props.altIds.opta),
           },
         },
       ])}
@@ -117,7 +118,7 @@ export default function Club() {
             title={team.name}
             subtitle={team.grounds[0].name}
             content={{
-              source: `https://resources.premierleague.com/premierleague/badges/${team.altIds.opta}.png`,
+              source: getClubLogo(team.altIds.opta),
               fallback: "default.png",
             }}
             actions={

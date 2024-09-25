@@ -2,6 +2,7 @@ import { showFailureToast } from "@raycast/utils";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import {
   Content,
+  EPLAward,
   EPLClub,
   EPLFixture,
   EPLPlayer,
@@ -46,6 +47,29 @@ export const getSeasons = async (
     showFailureToast(e);
 
     return [];
+  }
+};
+
+export const getAwards = async (compSeasons: string) => {
+  const config: AxiosRequestConfig = {
+    method: "GET",
+    url: `${endpoint}/compseasons/${compSeasons}/awards`,
+    params: {
+      altIds: true,
+    },
+    headers: {
+      ...headers,
+    },
+  };
+
+  try {
+    const { data }: AxiosResponse<EPLAward> = await axios(config);
+
+    return data;
+  } catch (e) {
+    showFailureToast(e);
+
+    return undefined;
   }
 };
 

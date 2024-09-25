@@ -4,6 +4,7 @@ import json2md from "json2md";
 import { useMemo } from "react";
 import { getManagers, getSeasons } from "./api";
 import { PlayerContent } from "./types";
+import { getProfileImg } from "./utils";
 
 function PlayerProfile(props: PlayerContent) {
   return (
@@ -13,7 +14,7 @@ function PlayerProfile(props: PlayerContent) {
         { h1: props.name.display },
         {
           img: {
-            source: `https://resources.premierleague.com/premierleague/photos/players/250x250/${props.altIds.opta}.png`,
+            source: getProfileImg(props.altIds.opta),
           },
         },
       ])}
@@ -53,7 +54,7 @@ export default function Manager() {
             title={p.name.display}
             subtitle={p.currentTeam?.name}
             content={{
-              source: `https://resources.premierleague.com/premierleague/photos/players/250x250/${p.altIds.opta}.png`,
+              source: getProfileImg(p.altIds.opta),
               fallback: "player-missing.png",
             }}
             actions={
