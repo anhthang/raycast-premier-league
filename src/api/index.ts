@@ -172,7 +172,7 @@ export const getPlayers = async (
   season: string,
   page: number,
 ): Promise<PlayerResult> => {
-  const params: { [key: string]: string | number | boolean } = {
+  const params: Record<string, string | number | boolean> = {
     pageSize,
     compSeasons: season,
     altIds: true,

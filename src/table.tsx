@@ -4,6 +4,20 @@ import { useState } from "react";
 import { getSeasons, getTables } from "./api";
 import { convertToLocalTime } from "./utils";
 
+const qualificationMap: Record<string, string> = {
+  EU_CL: "UEFA Champions League",
+  EU_EL: "UEFA Europa League",
+  EU_ECL: "UEFA Conference League",
+  EN_CH: "EFL Championship",
+};
+
+const qualificationColor: Record<string, string> = {
+  EU_CL: Color.Blue,
+  EU_EL: Color.Orange,
+  EU_ECL: Color.Green,
+  EN_CH: Color.Red,
+};
+
 export default function GetTables() {
   const { data: seasons = [] } = usePromise(getSeasons);
 
@@ -47,8 +61,15 @@ export default function GetTables() {
         return (
           <List.Section key={table.gameWeek}>
             {table.entries.map((entry) => {
-              const { overall, team, position, form, next, startingPosition } =
-                entry;
+              const {
+                overall,
+                team,
+                position,
+                form,
+                next,
+                startingPosition,
+                annotations,
+              } = entry;
 
               let icon: Image.ImageLike = {
                 source: Icon.Dot,
@@ -104,6 +125,29 @@ export default function GetTables() {
                     <List.Item.Detail
                       metadata={
                         <List.Item.Detail.Metadata>
+                          {Array.isArray(annotations) && annotations.length && (
+                            <List.Item.Detail.Metadata.TagList
+                              title={
+                                annotations[0].type === "Q"
+                                  ? "Qualification"
+                                  : "Relegation"
+                              }
+                            >
+                              {annotations.map((annotation, idx) => {
+                                return (
+                                  <List.Item.Detail.Metadata.TagList.Item
+                                    key={idx}
+                                    text={
+                                      qualificationMap[annotation.destination]
+                                    }
+                                    color={
+                                      qualificationColor[annotation.destination]
+                                    }
+                                  />
+                                );
+                              })}
+                            </List.Item.Detail.Metadata.TagList>
+                          )}
                           <List.Item.Detail.Metadata.Label
                             title="Played"
                             text={overall.played.toString()}

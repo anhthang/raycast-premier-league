@@ -62,7 +62,7 @@ function ClubProfile(props: TeamTeam) {
         <ActionPanel>
           <Action.Push
             title="Squad"
-            icon={Icon.Person}
+            icon={Icon.TwoPeople}
             target={<Player club={props.club} />}
           />
           <Action.OpenInBrowser

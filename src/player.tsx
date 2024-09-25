@@ -1,6 +1,7 @@
 import { Action, ActionPanel, Detail, Grid, Icon } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import json2md from "json2md";
+import groupBy from "lodash.groupby";
 import { useMemo, useState } from "react";
 import {
   getPlayers,
@@ -12,7 +13,7 @@ import {
 import { Award, Club, PlayerContent } from "./types";
 import { getFlagEmoji } from "./utils";
 
-const awardMap: { [key: string]: string } = {
+const awardMap: Record<string, string> = {
   GOLDEN_GLOVE: "Golden Glove",
   CHAMPIONS: "Premier League Champion",
   PLAYER_OF_THE_MONTH: "Player of the Month",
@@ -190,6 +191,9 @@ export default function Player(props: { club: Club }) {
     listProps.onSearchTextChange = setTerms;
   }
 
+  // console.log(data && data[0])
+  const positions = groupBy(data, "latestPosition");
+
   return (
     <Grid throttle isLoading={isLoading} pagination={pagination} {...listProps}>
       {props.club && (
@@ -205,27 +209,36 @@ export default function Player(props: { club: Club }) {
         />
       )}
       {(!terms || terms.length >= 3) &&
-        data?.map((p) => {
+        Object.entries(positions).map(([position, players]) => {
           return (
-            <Grid.Item
-              key={p.id}
-              title={p.name.display}
-              subtitle={p.info.positionInfo}
-              keywords={[p.info.positionInfo]}
-              content={{
-                source: `https://resources.premierleague.com/premierleague/photos/players/250x250/${p.altIds.opta}.png`,
-                fallback: "player-missing.png",
-              }}
-              actions={
-                <ActionPanel>
-                  <Action.Push
-                    title="View Player"
-                    icon={Icon.Sidebar}
-                    target={<PlayerProfile {...p} />}
+            <Grid.Section
+              key={position}
+              title={`${position.charAt(0).toUpperCase()}${position.slice(1).toLowerCase()}`}
+            >
+              {players.map((player) => {
+                return (
+                  <Grid.Item
+                    key={player.id}
+                    title={player.name.display}
+                    subtitle={player.info.positionInfo}
+                    keywords={[player.info.positionInfo]}
+                    content={{
+                      source: `https://resources.premierleague.com/premierleague/photos/players/250x250/${player.altIds.opta}.png`,
+                      fallback: "player-missing.png",
+                    }}
+                    actions={
+                      <ActionPanel>
+                        <Action.Push
+                          title="View Player"
+                          icon={Icon.Sidebar}
+                          target={<PlayerProfile {...player} />}
+                        />
+                      </ActionPanel>
+                    }
                   />
-                </ActionPanel>
-              }
-            />
+                );
+              })}
+            </Grid.Section>
           );
         })}
     </Grid>
