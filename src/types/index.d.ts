@@ -41,7 +41,7 @@ export interface EPLStaff {
   compSeason: CompSeason;
   team: TeamTeam;
   players: PlayerContent[];
-  officials: Official[];
+  officials: PlayerContent[];
 }
 
 export interface EPLStanding {
@@ -53,7 +53,7 @@ export interface EPLStanding {
 }
 
 export interface Award {
-  official?: Official;
+  official?: PlayerContent;
   award: string;
   awardTypeId: number;
   relatedContent: RelatedContent[];
@@ -64,18 +64,6 @@ export interface Award {
 export interface RelatedContent {
   type: string;
   reference: string;
-}
-
-export interface Official {
-  officialId: number;
-  role: string;
-  currentTeam: TeamTeam;
-  active: boolean;
-  birth: Birth;
-  age: string;
-  name: Name;
-  id: number;
-  altIds: AltIDS;
 }
 
 export interface Content {
@@ -246,7 +234,7 @@ export interface Timestamp {
 }
 
 export interface PlayerContent {
-  // active: null;
+  active: boolean;
   age: string;
   altIds: AltIDS;
   appearances: number;
@@ -268,8 +256,10 @@ export interface PlayerContent {
   // metadata: null;
   name: Name;
   nationalTeam?: NationalTeam;
+  officialId: number;
   playerId: number;
   previousTeam?: TeamTeam;
+  role: string;
   saves?: number;
   shots?: number;
   tackles?: number;
