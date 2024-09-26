@@ -1,6 +1,7 @@
 import { Action, ActionPanel, Color, Icon, Image, List } from "@raycast/api";
 import { Content } from "../types";
 import { convertToLocalTime } from "../utils";
+import MatchEvents from "./match";
 
 interface PropsType {
   matchday: string;
@@ -67,9 +68,16 @@ export default function Matchday(props: PropsType) {
             keywords={keywords}
             actions={
               <ActionPanel>
-                <Action.OpenInBrowser
-                  url={`https://www.premierleague.com/match/${match.id}`}
-                />
+                <ActionPanel.Section title="Match">
+                  <Action.Push
+                    title="Match Commentary"
+                    icon={Icon.BulletPoints}
+                    target={<MatchEvents fixture={match.id} />}
+                  />
+                  <Action.OpenInBrowser
+                    url={`https://www.premierleague.com/match/${match.id}`}
+                  />
+                </ActionPanel.Section>
               </ActionPanel>
             }
           />

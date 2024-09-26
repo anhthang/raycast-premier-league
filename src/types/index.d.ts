@@ -8,6 +8,24 @@ export interface EPLFixture {
   content: Content[];
 }
 
+export interface EPLFixtureEvents {
+  fixture: Content;
+  events: EPLFixtureEvent;
+}
+
+export interface EPLFixtureEvent {
+  pageInfo: PageInfo;
+  content: FixtureEvent[];
+}
+
+export interface FixtureEvent {
+  id: number;
+  time?: Clock;
+  type: string;
+  text: string;
+  playerIds?: number[];
+}
+
 export interface EPLPlayer {
   pageInfo: PageInfo;
   content: PlayerContent[];

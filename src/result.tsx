@@ -32,7 +32,7 @@ export default function Fixture() {
   const { isLoading, data, pagination } = usePromise(
     (comps, teams, compSeasons) =>
       async ({ page = 0 }) => {
-        const [data, hasMore] = await getFixtures({
+        return getFixtures({
           teams,
           page,
           sort: "desc",
@@ -40,8 +40,6 @@ export default function Fixture() {
           comps,
           compSeasons,
         });
-
-        return { data, hasMore };
       },
     [comps, teams, compSeasons],
   );

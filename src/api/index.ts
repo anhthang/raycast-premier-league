@@ -5,10 +5,12 @@ import {
   EPLAward,
   EPLClub,
   EPLFixture,
+  EPLFixtureEvents,
   EPLPlayer,
   EPLPlayerSearch,
   EPLStaff,
   EPLStanding,
+  FixtureEvent,
   PlayerContent,
   Table,
   TeamTeam,
@@ -21,8 +23,8 @@ const headers = {
 
 const pageSize = 50;
 
-interface PlayerResult {
-  data: PlayerContent[];
+interface Pagination<T> {
+  data: T[];
   hasMore: boolean;
 }
 
@@ -163,7 +165,7 @@ export const getFixtures = async (props: {
   statuses: string;
   comps: string;
   compSeasons: string;
-}): Promise<[Content[], boolean]> => {
+}): Promise<Pagination<Content>> => {
   if (props.teams === "-1") {
     delete props.teams;
   }
@@ -183,11 +185,39 @@ export const getFixtures = async (props: {
     const { data }: AxiosResponse<EPLFixture> = await axios(config);
     const hasMore = data.pageInfo.numPages > data.pageInfo.page + 1;
 
-    return [data.content, hasMore];
+    return { data: data.content, hasMore };
   } catch (e) {
     showFailureToast(e);
 
-    return [[], false];
+    return { data: [], hasMore: false };
+  }
+};
+
+export const getFixtureEvents = async (
+  fixtureId: string,
+  page: number,
+): Promise<Pagination<FixtureEvent>> => {
+  const config: AxiosRequestConfig = {
+    method: "get",
+    url: `${endpoint}/fixtures/${fixtureId}/textstream/EN`,
+    params: {
+      pageSize: 40,
+      sort: "desc",
+      page,
+    },
+    headers,
+  };
+
+  try {
+    const { data }: AxiosResponse<EPLFixtureEvents> = await axios(config);
+    const hasMore =
+      data.events.pageInfo.numPages > data.events.pageInfo.page + 1;
+
+    return { data: data.events.content, hasMore };
+  } catch (e) {
+    showFailureToast(e);
+
+    return { data: [], hasMore: false };
   }
 };
 
@@ -195,7 +225,7 @@ export const getPlayers = async (
   teams: string,
   season: string,
   page: number,
-): Promise<PlayerResult> => {
+): Promise<Pagination<PlayerContent>> => {
   const params: Record<string, string | number | boolean> = {
     pageSize,
     compSeasons: season,
@@ -232,7 +262,7 @@ export const getPlayers = async (
 export const getStaffs = async (
   team: string,
   season: string,
-): Promise<PlayerResult> => {
+): Promise<Pagination<PlayerContent>> => {
   const config: AxiosRequestConfig = {
     method: "get",
     url: `${endpoint}/teams/${team}/compseasons/${season}/staff`,
@@ -287,7 +317,7 @@ export const getManagers = async (compSeasons: string) => {
 export const getPlayersWithTerms = async (
   terms: string,
   page: number,
-): Promise<PlayerResult> => {
+): Promise<Pagination<PlayerContent>> => {
   const config: AxiosRequestConfig = {
     method: "get",
     url: `https://footballapi.pulselive.com/search/PremierLeague`,
