@@ -29,6 +29,12 @@
       "mode": "view"
     },
     {
+      "name": "club",
+      "title": "Clubs",
+      "description": "Explore club profiles, player rosters, historical data, and recent performances.",
+      "mode": "view"
+    },
+    {
       "name": "player",
       "title": "Players",
       "description": "Search for player profiles, statistics, career highlights, and transfer history.",
@@ -41,12 +47,6 @@
       "description": "Find manager profiles, career achievements, and teams managed.",
       "mode": "view",
       "disabledByDefault": true
-    },
-    {
-      "name": "club",
-      "title": "Clubs",
-      "description": "Explore club profiles, player rosters, historical data, and recent performances.",
-      "mode": "view"
     },
     {
       "name": "award",

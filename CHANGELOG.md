@@ -1,7 +1,8 @@
 # Premier League Changelog
 
-## [Enhanced Standings] - {RELEASE_DATE}
-- Updated standings to always show detailed statistics, including points, goal difference, and head-to-head records.
+## [Awards & Match Day Essentials] - {RELEASE_DATE}
+- Added live match commentary and line-up information for each fixture, providing a more immersive experience.
+- Updated standings to always display detailed statistics, including played matches, goals for/against, goal difference, points, and form.
 - Added the "award" command to view a list of Premier League individual and team awards, including winners and statistics.
 
 ## [Seamless Pagination] - 2024-09-24

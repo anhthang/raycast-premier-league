@@ -191,6 +191,29 @@ export const getFixtures = async (props: {
   }
 };
 
+export const getFixture = async (
+  fixtureId: number,
+): Promise<Fixture | undefined> => {
+  const config: AxiosRequestConfig = {
+    method: "get",
+    url: `${endpoint}/fixtures/${fixtureId}`,
+    params: {
+      altIds: true,
+    },
+    headers,
+  };
+
+  try {
+    const { data }: AxiosResponse<Fixture> = await axios(config);
+
+    return data;
+  } catch (e) {
+    showFailureToast(e);
+
+    return undefined;
+  }
+};
+
 export const getMatchCommentary = async (
   fixtureId: string,
   page: number,

@@ -5,7 +5,7 @@ import { getMatchCommentary } from "../api";
 const iconMap: Record<string, string> = {
   "end 2": "time-full",
   "end 1": "time-half",
-  goal: "ball",
+  goal: "goal",
   "yellow card": "card-yellow",
   substitution: "sub-on-off",
   "red card": "card-red",
@@ -55,6 +55,7 @@ export default function MatchCommentary(props: {
             title={title}
             subtitle={subtitle}
             icon={icon}
+            keywords={[title, subtitle]}
             actions={
               <ActionPanel>
                 <Action.OpenInBrowser

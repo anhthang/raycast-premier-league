@@ -10,9 +10,16 @@ export interface EPLFixtureEvents {
 
 export interface FixtureEvent {
   id: number;
-  time?: Clock;
+  persionId: number;
+  teamId: number;
+  assistId: number;
+  clock?: Timestamp;
+  time?: Timestamp;
+  phase?: string;
   type: string;
+  description: string;
   text: string;
+  score: Score;
   playerIds?: number[];
 }
 
@@ -53,8 +60,8 @@ export interface RelatedContent {
 
 export interface Fixture {
   gameweek: Gameweek;
-  kickoff: Kickoff;
-  provisionalKickoff: Kickoff;
+  kickoff: Timestamp;
+  provisionalKickoff: Timestamp;
   teams: TeamScore[];
   replay: boolean;
   ground: Ground;
@@ -63,15 +70,46 @@ export interface Fixture {
   phase: string;
   outcome: string;
   attendance?: number;
-  clock?: Clock;
+  clock?: Timestamp;
   fixtureType: string;
   extraTime: boolean;
   shootout: boolean;
-  goals: Goal[];
+  matchOfficials: MatchOfficial[];
+  halfTimeScore: Score;
+  teamLists: TeamList[];
+  events: FixtureEvent[];
+  goals: FixtureEvent[];
   penaltyShootouts: unknown[];
   behindClosedDoors: boolean;
   id: number;
   altIds: AltIDS;
+  metadata: Record<string, unknown>;
+  _source: string;
+}
+
+export interface TeamList {
+  teamId: number;
+  lineup: Player[];
+  substitutes: Player[];
+  formation: Formation;
+}
+
+export interface Formation {
+  label: string;
+  players: Array<number[]>;
+}
+
+export interface MatchOfficial {
+  matchOfficialId: number;
+  role: string;
+  birth: Birth;
+  name: Name;
+  id: number;
+}
+
+export interface Score {
+  homeScore: number;
+  awayScore: number;
 }
 
 export interface Table {
@@ -112,11 +150,6 @@ export interface AltIDS {
   opta: string;
 }
 
-export interface Clock {
-  secs: number;
-  label: string;
-}
-
 export interface Gameweek {
   id: number;
   compSeason: CompSeason;
@@ -145,15 +178,6 @@ export interface CompetitionPhase {
   gameweekRange: number[];
 }
 
-export interface Goal {
-  personId: number;
-  clock: Clock;
-  phase: string;
-  type: string;
-  description: string;
-  assistId?: number;
-}
-
 export interface Ground {
   name: string;
   city: string;
@@ -166,13 +190,6 @@ export interface Ground {
 export interface Location {
   latitude: number;
   longitude: number;
-}
-
-export interface Kickoff {
-  completeness: number;
-  millis?: number;
-  label?: string;
-  gmtOffset?: number;
 }
 
 export interface TeamScore {
@@ -214,8 +231,11 @@ export interface PageInfo {
 }
 
 export interface Timestamp {
-  millis: number;
-  label: string;
+  completeness?: number;
+  gmtOffset?: number;
+  label?: string;
+  millis?: number;
+  secs?: number;
 }
 
 export interface Player {
@@ -226,6 +246,7 @@ export interface Player {
   assists?: number;
   awards?: Record<string, PlayerAward[]>;
   birth: Birth;
+  captain: boolean;
   cleanSheets: number;
   currentTeam?: Team;
   // debut: Timestamp;
@@ -238,9 +259,11 @@ export interface Player {
   keyPasses?: number;
   latestPosition: string;
   // leaveDate: null;
+  matchPosition: Position;
+  matchShirtNumber: number;
   // metadata: null;
   name: Name;
-  nationalTeam?: NationalTeam;
+  nationalTeam?: Country;
   officialId: number;
   playerId: number;
   previousTeam?: Team;
@@ -254,11 +277,11 @@ export interface Player {
 
 export interface Birth {
   date: Timestamp;
-  country: NationalTeam;
+  country: Country;
   place?: string;
 }
 
-export interface NationalTeam {
+export interface Country {
   isoCode: string;
   country: string;
   demonym?: string;
@@ -279,12 +302,12 @@ export interface Name {
 }
 
 export interface PlayerAward {
-  date: CHAMPIONDate;
+  date: Date;
   compSeason: CompSeason;
   notes?: string;
 }
 
-export interface CHAMPIONDate {
+export interface Date {
   year: number;
   month: number;
   day: number;

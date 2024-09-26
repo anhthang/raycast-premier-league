@@ -1,7 +1,8 @@
 import { Action, ActionPanel, Color, Icon, Image, List } from "@raycast/api";
 import { Fixture } from "../types";
 import { convertToLocalTime } from "../utils";
-import MatchCommentary from "./match";
+import MatchCommentary from "./commentary";
+import MatchLineups from "./lineup";
 
 interface PropsType {
   matchday: string;
@@ -68,21 +69,34 @@ export default function Matchday(props: PropsType) {
             keywords={keywords}
             actions={
               <ActionPanel>
-                <ActionPanel.Section title="Match">
-                  <Action.Push
-                    title="Match Commentary"
-                    icon={Icon.BulletPoints}
-                    target={
-                      <MatchCommentary
-                        match={`${match.teams[0].team.name} - ${match.teams[1].team.name}`}
-                        fixture={match.id}
-                      />
-                    }
-                  />
+                {match.status === "U" ? (
                   <Action.OpenInBrowser
                     url={`https://www.premierleague.com/match/${match.id}`}
                   />
-                </ActionPanel.Section>
+                ) : (
+                  <ActionPanel.Section title="Information">
+                    <Action.Push
+                      title="Match Commentary"
+                      icon={Icon.BulletPoints}
+                      target={
+                        <MatchCommentary
+                          match={`${match.teams[0].team.name} - ${match.teams[1].team.name}`}
+                          fixture={match.id}
+                        />
+                      }
+                    />
+                    <Action.Push
+                      title="Match Line-ups"
+                      icon={Icon.TwoPeople}
+                      target={
+                        <MatchLineups
+                          match={`${match.teams[0].team.name} - ${match.teams[1].team.name}`}
+                          fixture={match.id}
+                        />
+                      }
+                    />
+                  </ActionPanel.Section>
+                )}
               </ActionPanel>
             }
           />
