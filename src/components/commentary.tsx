@@ -3,14 +3,19 @@ import { usePromise } from "@raycast/utils";
 import { getMatchCommentary } from "../api";
 
 const iconMap: Record<string, string> = {
-  "end 2": "time-full",
   "end 1": "time-half",
+  "end 2": "time-full",
   goal: "goal",
-  "yellow card": "card-yellow",
-  substitution: "sub-on-off",
+  "own goal": "goal",
+  "penalty goal": "goal",
   "red card": "card-red",
   "secondyellow card": "card-yellow-red",
+  substitution: "sub-on-off",
+  "yellow card": "card-yellow",
 };
+
+const transparentIcons = ["whistle", "goal", "time-full", "time-half"];
+const textLabelIcons = ["end 14", "lineup", "start"];
 
 export default function MatchCommentary(props: {
   fixture: number;
@@ -33,21 +38,19 @@ export default function MatchCommentary(props: {
     >
       {data?.map((event) => {
         const filename = iconMap[event.type] || "whistle";
-        const icon: Image.ImageLike =
-          filename === "whistle" || filename.startsWith("time")
-            ? {
-                source: `match/${filename}.svg`,
-                tintColor: Color.PrimaryText,
-              }
-            : `match/${filename}.svg`;
+        const icon: Image.ImageLike = transparentIcons.includes(filename)
+          ? {
+              source: `match/${filename}.svg`,
+              tintColor:
+                event.type === "own goal" ? Color.Red : Color.PrimaryText,
+            }
+          : `match/${filename}.svg`;
 
-        const title = ["end 14", "lineup", "start"].includes(event.type)
+        const title = textLabelIcons.includes(event.type)
           ? event.text
-          : String(event.time?.label);
+          : `${event.time?.label}'`;
 
-        const subtitle = ["end 14", "lineup", "start"].includes(event.type)
-          ? ""
-          : event.text;
+        const subtitle = textLabelIcons.includes(event.type) ? "" : event.text;
 
         return (
           <List.Item

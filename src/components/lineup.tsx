@@ -17,6 +17,8 @@ function getAccessories(events: FixtureEvent[] = []) {
   const accessories: List.Item.Accessory[] = [];
 
   events.forEach((event) => {
+    const tag = event.clock?.label?.replace("'00", "'");
+
     switch (event.type) {
       case "B":
         {
@@ -29,7 +31,7 @@ function getAccessories(events: FixtureEvent[] = []) {
             icon = "match/card-yellow-red.svg";
           }
 
-          accessories.push({ icon, text: event.clock?.label });
+          accessories.push({ icon, tag });
         }
         break;
       case "G":
@@ -38,12 +40,31 @@ function getAccessories(events: FixtureEvent[] = []) {
             source: "match/goal.svg",
             tintColor: Color.PrimaryText,
           },
+          tag,
+        });
+        break;
+      case "O":
+        accessories.push({
+          icon: {
+            source: "match/goal.svg",
+            tintColor: Color.Red,
+          },
+          tag,
+        });
+        break;
+      case "P":
+        accessories.push({
+          icon: {
+            source: "match/goal.svg",
+            tintColor: Color.PrimaryText,
+          },
+          tag: `${tag} (pen)`,
         });
         break;
       case "S":
         accessories.push({
           icon: `match/sub-${event.description.toLowerCase()}.svg`,
-          text: event.clock?.label,
+          tag,
         });
         break;
       default:
@@ -72,7 +93,7 @@ export default function MatchLineups(props: {
     <List
       throttle
       isLoading={isLoading}
-      navigationTitle={`${props.match} | Line-ups`}
+      navigationTitle={`${props.match} | Match Line-ups`}
       searchBarAccessory={
         <List.Dropdown tooltip="Change Team" onChange={setTeamId}>
           {data?.teams.map((team) => {
