@@ -5,10 +5,10 @@ import { useState } from "react";
 import { getClubs } from "./api";
 import SearchBarSeason from "./components/searchbar_season";
 import Player from "./player";
-import { TeamTeam } from "./types";
+import { Team } from "./types";
 import { getClubLogo } from "./utils";
 
-function ClubProfile(props: TeamTeam) {
+function ClubProfile(props: Team) {
   const { metadata } = props;
   return (
     <Detail
@@ -78,7 +78,7 @@ function ClubProfile(props: TeamTeam) {
   );
 }
 
-export default function Club() {
+export default function EPLClub() {
   const [seasonId, setSeasonId] = useState<string>();
 
   const { data: clubs, isLoading } = usePromise(

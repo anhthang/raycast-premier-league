@@ -4,10 +4,10 @@ import json2md from "json2md";
 import { useState } from "react";
 import { getManagers } from "./api";
 import SearchBarSeason from "./components/searchbar_season";
-import { PlayerContent } from "./types";
+import { Player } from "./types";
 import { getProfileImg } from "./utils";
 
-function PlayerProfile(props: PlayerContent) {
+function PlayerProfile(props: Player) {
   return (
     <Detail
       navigationTitle={`${props.name.display} | Profile`}
@@ -40,7 +40,7 @@ function PlayerProfile(props: PlayerContent) {
   );
 }
 
-export default function Manager() {
+export default function EPLManager() {
   const [seasonId, setSeasonId] = useState<string>();
 
   const { data: managers, isLoading } = usePromise(

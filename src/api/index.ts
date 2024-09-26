@@ -1,19 +1,17 @@
 import { showFailureToast } from "@raycast/utils";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import {
-  Content,
   EPLAward,
-  EPLClub,
-  EPLFixture,
+  EPLContent,
   EPLFixtureEvents,
-  EPLPlayer,
   EPLPlayerSearch,
   EPLStaff,
   EPLStanding,
+  Fixture,
   FixtureEvent,
-  PlayerContent,
+  Player,
   Table,
-  TeamTeam,
+  Team,
 } from "../types";
 
 const endpoint = "https://footballapi.pulselive.com/football";
@@ -75,7 +73,7 @@ export const getAwards = async (compSeasons: string) => {
   }
 };
 
-export const getClubs = async (compSeasons: string): Promise<TeamTeam[]> => {
+export const getClubs = async (compSeasons: string): Promise<Team[]> => {
   const config: AxiosRequestConfig = {
     method: "GET",
     url: `${endpoint}/teams`,
@@ -93,7 +91,7 @@ export const getClubs = async (compSeasons: string): Promise<TeamTeam[]> => {
   };
 
   try {
-    const { data }: AxiosResponse<EPLClub> = await axios(config);
+    const { data }: AxiosResponse<EPLContent<Team>> = await axios(config);
 
     return data.content;
   } catch (e) {
@@ -113,7 +111,7 @@ export const getTeams = async (
   };
 
   try {
-    const { data }: AxiosResponse<TeamTeam[]> = await axios(config);
+    const { data }: AxiosResponse<Team[]> = await axios(config);
 
     const teams = data.map((team) => ({
       title: team.name,
@@ -165,7 +163,7 @@ export const getFixtures = async (props: {
   statuses: string;
   comps: string;
   compSeasons: string;
-}): Promise<Pagination<Content>> => {
+}): Promise<Pagination<Fixture>> => {
   if (props.teams === "-1") {
     delete props.teams;
   }
@@ -182,7 +180,7 @@ export const getFixtures = async (props: {
   };
 
   try {
-    const { data }: AxiosResponse<EPLFixture> = await axios(config);
+    const { data }: AxiosResponse<EPLContent<Fixture>> = await axios(config);
     const hasMore = data.pageInfo.numPages > data.pageInfo.page + 1;
 
     return { data: data.content, hasMore };
@@ -193,7 +191,7 @@ export const getFixtures = async (props: {
   }
 };
 
-export const getFixtureEvents = async (
+export const getMatchCommentary = async (
   fixtureId: string,
   page: number,
 ): Promise<Pagination<FixtureEvent>> => {
@@ -225,7 +223,7 @@ export const getPlayers = async (
   teams: string,
   season: string,
   page: number,
-): Promise<Pagination<PlayerContent>> => {
+): Promise<Pagination<Player>> => {
   const params: Record<string, string | number | boolean> = {
     pageSize,
     compSeasons: season,
@@ -248,7 +246,7 @@ export const getPlayers = async (
   };
 
   try {
-    const { data }: AxiosResponse<EPLPlayer> = await axios(config);
+    const { data }: AxiosResponse<EPLContent<Player>> = await axios(config);
     const hasMore = data.pageInfo.numPages > data.pageInfo.page + 1;
 
     return { data: data.content, hasMore };
@@ -262,7 +260,7 @@ export const getPlayers = async (
 export const getStaffs = async (
   team: string,
   season: string,
-): Promise<Pagination<PlayerContent>> => {
+): Promise<Pagination<Player>> => {
   const config: AxiosRequestConfig = {
     method: "get",
     url: `${endpoint}/teams/${team}/compseasons/${season}/staff`,
@@ -304,7 +302,7 @@ export const getManagers = async (compSeasons: string) => {
   };
 
   try {
-    const { data }: AxiosResponse<EPLPlayer> = await axios(config);
+    const { data }: AxiosResponse<EPLContent<Player>> = await axios(config);
 
     return data.content;
   } catch (e) {
@@ -317,7 +315,7 @@ export const getManagers = async (compSeasons: string) => {
 export const getPlayersWithTerms = async (
   terms: string,
   page: number,
-): Promise<Pagination<PlayerContent>> => {
+): Promise<Pagination<Player>> => {
   const config: AxiosRequestConfig = {
     method: "get",
     url: `https://footballapi.pulselive.com/search/PremierLeague`,

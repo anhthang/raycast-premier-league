@@ -19,7 +19,7 @@ const qualificationColor: Record<string, string> = {
   EN_CH: Color.Red,
 };
 
-export default function GetTables() {
+export default function EPLTables() {
   const [seasonId, setSeasonId] = useState<string>();
 
   const { data: tables, isLoading } = usePromise(

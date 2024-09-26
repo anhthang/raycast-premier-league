@@ -1,11 +1,11 @@
 import { Action, ActionPanel, Color, Icon, Image, List } from "@raycast/api";
-import { Content } from "../types";
+import { Fixture } from "../types";
 import { convertToLocalTime } from "../utils";
-import MatchEvents from "./match";
+import MatchCommentary from "./match";
 
 interface PropsType {
   matchday: string;
-  matches: Content[];
+  matches: Fixture[];
 }
 
 export default function Matchday(props: PropsType) {
@@ -72,7 +72,12 @@ export default function Matchday(props: PropsType) {
                   <Action.Push
                     title="Match Commentary"
                     icon={Icon.BulletPoints}
-                    target={<MatchEvents fixture={match.id} />}
+                    target={
+                      <MatchCommentary
+                        match={`${match.teams[0].team.name} - ${match.teams[1].team.name}`}
+                        fixture={match.id}
+                      />
+                    }
                   />
                   <Action.OpenInBrowser
                     url={`https://www.premierleague.com/match/${match.id}`}

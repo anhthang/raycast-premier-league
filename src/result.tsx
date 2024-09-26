@@ -11,7 +11,7 @@ import { convertToLocalTime } from "./utils";
 
 const { filter } = getPreferenceValues();
 
-export default function Fixture() {
+export default function EPLResult() {
   const [comps, setCompetition] = useState<string>(competitions[0].value);
   const [teams, setTeams] = useState<string>("-1");
 

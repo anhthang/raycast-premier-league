@@ -10,7 +10,7 @@ import {
   getStaffs,
   getTeams,
 } from "./api";
-import { Club, PlayerAward, PlayerContent } from "./types";
+import { Club, Player, PlayerAward } from "./types";
 import { awardMap, getFlagEmoji, getProfileImg } from "./utils";
 
 const months = [
@@ -28,7 +28,7 @@ const months = [
   "December",
 ];
 
-function PlayerProfile(props: PlayerContent) {
+function PlayerProfile(props: Player) {
   return (
     <Detail
       navigationTitle={`${props.name.display} | Profile & Stats`}
@@ -116,7 +116,7 @@ function PlayerProfile(props: PlayerContent) {
   );
 }
 
-export default function Player(props: { club: Club }) {
+export default function EPLPlayer(props: { club: Club }) {
   const [teamId, setTeam] = useState<string>(props.club?.id.toString() ?? "-1");
 
   const { data: seasons = [] } = usePromise(getSeasons);

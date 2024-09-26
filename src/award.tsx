@@ -10,7 +10,7 @@ import {
   getProfileImg,
 } from "./utils";
 
-export default function Award() {
+export default function EPLAward() {
   const [seasonId, setSeasonId] = useState<string>();
 
   const { data: awards, isLoading } = usePromise(

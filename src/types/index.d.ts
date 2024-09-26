@@ -1,21 +1,11 @@
-export interface EPLClub {
+export interface EPLContent<T> {
   pageInfo: PageInfo;
-  content: TeamTeam[];
-}
-
-export interface EPLFixture {
-  pageInfo: PageInfo;
-  content: Content[];
+  content: T[];
 }
 
 export interface EPLFixtureEvents {
-  fixture: Content;
-  events: EPLFixtureEvent;
-}
-
-export interface EPLFixtureEvent {
-  pageInfo: PageInfo;
-  content: FixtureEvent[];
+  fixture: Fixture;
+  events: EPLContent<FixtureEvent>;
 }
 
 export interface FixtureEvent {
@@ -26,11 +16,6 @@ export interface FixtureEvent {
   playerIds?: number[];
 }
 
-export interface EPLPlayer {
-  pageInfo: PageInfo;
-  content: PlayerContent[];
-}
-
 export interface EPLAward {
   compSeason: CompSeason;
   seasonAwards: Award[];
@@ -39,9 +24,9 @@ export interface EPLAward {
 
 export interface EPLStaff {
   compSeason: CompSeason;
-  team: TeamTeam;
-  players: PlayerContent[];
-  officials: PlayerContent[];
+  team: Team;
+  players: Player[];
+  officials: Player[];
 }
 
 export interface EPLStanding {
@@ -53,12 +38,12 @@ export interface EPLStanding {
 }
 
 export interface Award {
-  official?: PlayerContent;
+  official?: Player;
   award: string;
   awardTypeId: number;
   relatedContent: RelatedContent[];
-  player?: PlayerContent;
-  apiTeam?: TeamTeam;
+  player?: Player;
+  apiTeam?: Team;
 }
 
 export interface RelatedContent {
@@ -66,11 +51,11 @@ export interface RelatedContent {
   reference: string;
 }
 
-export interface Content {
+export interface Fixture {
   gameweek: Gameweek;
   kickoff: Kickoff;
   provisionalKickoff: Kickoff;
-  teams: TeamElement[];
+  teams: TeamScore[];
   replay: boolean;
   ground: Ground;
   neutralGround: boolean;
@@ -95,15 +80,15 @@ export interface Table {
 }
 
 export interface Entry {
-  team: TeamTeam;
+  team: Team;
   position: number;
   startingPosition: number;
   overall: Stats;
   home: Stats;
   away: Stats;
   annotations?: Annotation[];
-  form: Content[];
-  next: Content;
+  form: Fixture[];
+  next: Fixture;
   ground: Ground;
 }
 
@@ -190,12 +175,12 @@ export interface Kickoff {
   gmtOffset?: number;
 }
 
-export interface TeamElement {
-  team: TeamTeam;
+export interface TeamScore {
+  team: Team;
   score: number;
 }
 
-export interface TeamTeam {
+export interface Team {
   name: string;
   club: Club;
   teamType: string;
@@ -233,7 +218,7 @@ export interface Timestamp {
   label: string;
 }
 
-export interface PlayerContent {
+export interface Player {
   active: boolean;
   age: string;
   altIds: AltIDS;
@@ -242,7 +227,7 @@ export interface PlayerContent {
   awards?: Record<string, PlayerAward[]>;
   birth: Birth;
   cleanSheets: number;
-  currentTeam?: TeamTeam;
+  currentTeam?: Team;
   // debut: Timestamp;
   goals?: number;
   goalsConceded?: number;
@@ -258,7 +243,7 @@ export interface PlayerContent {
   nationalTeam?: NationalTeam;
   officialId: number;
   playerId: number;
-  previousTeam?: TeamTeam;
+  previousTeam?: Team;
   role: string;
   saves?: number;
   shots?: number;
@@ -320,5 +305,5 @@ export interface Hits {
 export interface Hit {
   id: string;
   contentType: string;
-  response: PlayerContent;
+  response: Player;
 }

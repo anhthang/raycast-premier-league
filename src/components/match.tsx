@@ -1,6 +1,6 @@
 import { Action, ActionPanel, Color, Image, List } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
-import { getFixtureEvents } from "../api";
+import { getMatchCommentary } from "../api";
 
 const iconMap: Record<string, string> = {
   "end 2": "time-full",
@@ -12,17 +12,25 @@ const iconMap: Record<string, string> = {
   "secondyellow card": "card-yellow-red",
 };
 
-export default function MatchEvents(props: { fixture: number }) {
+export default function MatchCommentary(props: {
+  fixture: number;
+  match: string;
+}) {
   const { isLoading, data, pagination } = usePromise(
     (fixtureId) =>
       async ({ page = 0 }) => {
-        return getFixtureEvents(fixtureId, page);
+        return getMatchCommentary(fixtureId, page);
       },
     [props.fixture],
   );
 
   return (
-    <List throttle isLoading={isLoading} pagination={pagination}>
+    <List
+      throttle
+      isLoading={isLoading}
+      pagination={pagination}
+      navigationTitle={`${props.match} | Match Commentary`}
+    >
       {data?.map((event) => {
         const filename = iconMap[event.type] || "whistle";
         const icon: Image.ImageLike =
