@@ -65,9 +65,16 @@ export const convertToLocalTime = (
 };
 
 export const getProfileImg = (optaId: string | undefined) => {
-  return `https://resources.premierleague.com/premierleague/photos/players/250x250/${optaId}.png`;
+  return `https://resources.premierleague.com/premierleague/photos/players/110x140/${optaId}.png`;
 };
 
 export const getClubLogo = (optaId: string) => {
   return `https://resources.premierleague.com/premierleague/badges/100/${optaId}@x2.png`;
+};
+
+export const positionMap: Record<string, string> = {
+  G: "Goalkeepers",
+  D: "Defenders",
+  M: "Midfielders",
+  F: "Forwards",
 };

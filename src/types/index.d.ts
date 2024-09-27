@@ -215,13 +215,13 @@ export interface Team {
   grounds: Ground[];
   id: number;
   metadata: {
-    communities_twitter: string;
-    club_highlights_internal_url: string;
     club_highlights_internal_description: string;
+    club_highlights_internal_url: string;
     communities_facebook: string;
-    communities_youtube: string;
     communities_instagram: string;
+    communities_twitter: string;
     communities_URL: string;
+    communities_youtube: string;
   };
   name: string;
   shortName: string;

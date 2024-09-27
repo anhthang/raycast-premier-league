@@ -1,8 +1,10 @@
-import { Grid } from "@raycast/api";
+import { Action, ActionPanel, Grid, Icon } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { useState } from "react";
 import { getAwards } from "./api";
+import { PlayerProfile } from "./components/player";
 import SearchBarSeason from "./components/searchbar_season";
+import { Award } from "./types";
 import {
   awardMap,
   convertToLocalTime,
@@ -18,6 +20,40 @@ export default function EPLAward() {
     [seasonId],
   );
 
+  const getAwardGrids = (awards: Award[] | undefined) => {
+    return awards?.map((award) => {
+      return (
+        <Grid.Item
+          key={award.awardTypeId}
+          title={awardMap[award.award]}
+          subtitle={
+            award.official?.name.display ||
+            award.player?.name.display ||
+            award.apiTeam?.name
+          }
+          content={{
+            source: award.apiTeam
+              ? getClubLogo(award.apiTeam.altIds.opta)
+              : getProfileImg(
+                  award.official?.altIds.opta || award.player?.altIds.opta,
+                ),
+            fallback: "player-missing.png",
+          }}
+          actions={
+            award.player && (
+              <ActionPanel>
+                <Action.Push
+                  title="View Profile"
+                  icon={Icon.Person}
+                  target={<PlayerProfile {...award.player} />}
+                />
+              </ActionPanel>
+            )
+          }
+        />
+      );
+    });
+  };
   return (
     <Grid
       throttle
@@ -27,27 +63,11 @@ export default function EPLAward() {
         <SearchBarSeason selected={seasonId} onSelect={setSeasonId} />
       }
     >
-      {awards?.seasonAwards.map((award) => {
-        return (
-          <Grid.Item
-            key={award.awardTypeId}
-            title={
-              award.official?.name.display ||
-              award.player?.name.display ||
-              award.apiTeam?.name
-            }
-            subtitle={awardMap[award.award]}
-            content={{
-              source: award.apiTeam
-                ? getClubLogo(award.apiTeam.altIds.opta)
-                : getProfileImg(
-                    award.official?.altIds.opta || award.player?.altIds.opta,
-                  ),
-              fallback: "player-missing.png",
-            }}
-          />
-        );
-      })}
+      <Grid.Section
+        title="Season Awards"
+        children={getAwardGrids(awards?.seasonAwards)}
+      />
+
       {Object.entries(awards?.monthAwards || {})
         .reverse()
         .map(([date, monthAwards]) => {
@@ -55,26 +75,8 @@ export default function EPLAward() {
             <Grid.Section
               title={convertToLocalTime(date, "MMMM yyyy", "yyyy-MM-dd")}
               key={date}
-            >
-              {monthAwards.map((award) => {
-                return (
-                  <Grid.Item
-                    key={award.awardTypeId}
-                    title={
-                      award.official?.name.display || award.player?.name.display
-                    }
-                    subtitle={awardMap[award.award]}
-                    content={{
-                      source: getProfileImg(
-                        award.official?.altIds.opta ||
-                          award.player?.altIds.opta,
-                      ),
-                      fallback: "player-missing.png",
-                    }}
-                  />
-                );
-              })}
-            </Grid.Section>
+              children={getAwardGrids(monthAwards)}
+            />
           );
         })}
     </Grid>

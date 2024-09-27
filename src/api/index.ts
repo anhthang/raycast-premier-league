@@ -303,10 +303,7 @@ export const getPlayerStats = async (playerId: number): Promise<Stat[]> => {
   }
 };
 
-export const getStaffs = async (
-  team: string,
-  season: string,
-): Promise<Pagination<Player>> => {
+export const getStaffs = async (team: number, season: string) => {
   const config: AxiosRequestConfig = {
     method: "get",
     url: `${endpoint}/teams/${team}/compseasons/${season}/staff`,
@@ -323,11 +320,11 @@ export const getStaffs = async (
   try {
     const { data }: AxiosResponse<EPLStaff> = await axios(config);
 
-    return { data: data.players, hasMore: false };
+    return data;
   } catch (e) {
     showFailureToast(e);
 
-    return { data: [], hasMore: false };
+    return undefined;
   }
 };
 

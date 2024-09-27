@@ -4,7 +4,7 @@ import json2md from "json2md";
 import { useState } from "react";
 import { getClubs } from "./api";
 import SearchBarSeason from "./components/searchbar_season";
-import Player from "./player";
+import ClubSquad from "./components/squad";
 import { Team } from "./types";
 import { getClubLogo } from "./utils";
 
@@ -65,7 +65,7 @@ function ClubProfile(props: Team) {
           <Action.Push
             title="Squad"
             icon={Icon.TwoPeople}
-            target={<Player club={props.club} />}
+            target={<ClubSquad {...props.club} />}
           />
           <Action.OpenInBrowser
             url={`https://www.premierleague.com/clubs/${
