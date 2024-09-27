@@ -4,6 +4,7 @@ import json2md from "json2md";
 import groupBy from "lodash.groupby";
 import { useMemo, useState } from "react";
 import {
+  getPlayerStats,
   getPlayers,
   getPlayersWithTerms,
   getSeasons,
@@ -29,8 +30,22 @@ const months = [
 ];
 
 function PlayerProfile(props: Player) {
+  const { data, isLoading } = usePromise(getPlayerStats, [props.id]);
+
+  const statsMap = groupBy(data, "name");
+  const stats = [
+    `Appearances: ${statsMap["appearances"]?.[0].value || 0}`,
+    `Goals: ${statsMap["goals"]?.[0].value || 0}`,
+    `Assists: ${statsMap["goal_assist"]?.[0].value || 0}`,
+  ];
+
+  if (props.info.position === "G" || props.info.position === "D") {
+    stats.push(`Clean sheets: ${statsMap["clean_sheet"]?.[0].value || 0}`);
+  }
+
   return (
     <Detail
+      isLoading={isLoading}
       navigationTitle={`${props.name.display} | Profile & Stats`}
       markdown={json2md([
         { h1: props.name.display },
@@ -43,12 +58,7 @@ function PlayerProfile(props: Player) {
           h2: "Premier League Record",
         },
         {
-          p: [
-            `Appearances: ${props.appearances || 0}`,
-            `Clean sheets: ${props.cleanSheets || 0}`,
-            `Goals: ${props.goals || 0}`,
-            `Assists: ${props.assists || 0}`,
-          ],
+          p: stats,
         },
         {
           h2: props.awards ? "Honours & Awards" : "",
@@ -61,10 +71,11 @@ function PlayerProfile(props: Player) {
               },
               {
                 ul: awards.map((award: PlayerAward) => {
+                  const month = Array.isArray(award.date)
+                    ? award.date[1]
+                    : award.date.month;
                   return key.endsWith("MONTH")
-                    ? `${months[award.date.month - 1]} ${
-                        award.compSeason.label
-                      }`
+                    ? `${months[month - 1]} ${award.compSeason.label}`
                     : award.compSeason.label;
                 }),
               },
@@ -83,16 +94,20 @@ function PlayerProfile(props: Player) {
             title="Date of Birth"
             text={props.birth.date.label}
           />
-          <Detail.Metadata.Label
-            title="Height (cm)"
-            text={props.height?.toString()}
-          />
+          {props.height && (
+            <Detail.Metadata.Label title="Height" text={`${props.height}cm`} />
+          )}
           <Detail.Metadata.Label title="Age" text={props.age} />
           <Detail.Metadata.Separator />
-          <Detail.Metadata.Label
-            title="Joined Date"
-            text={props.joinDate?.label}
-          />
+          {props.currentTeam && (
+            <Detail.Metadata.Label title="Club" text={props.currentTeam.name} />
+          )}
+          {props.joinDate && (
+            <Detail.Metadata.Label
+              title="Joined Date"
+              text={props.joinDate?.label}
+            />
+          )}
           <Detail.Metadata.Label
             title="Position"
             text={props.info.positionInfo}

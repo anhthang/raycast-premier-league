@@ -4,12 +4,14 @@ import {
   EPLAward,
   EPLContent,
   EPLFixtureEvents,
+  EPLPlayer,
   EPLPlayerSearch,
   EPLStaff,
   EPLStanding,
   Fixture,
   FixtureEvent,
   Player,
+  Stat,
   Table,
   Team,
 } from "../types";
@@ -277,6 +279,27 @@ export const getPlayers = async (
     showFailureToast(e);
 
     return { data: [], hasMore: false };
+  }
+};
+
+export const getPlayerStats = async (playerId: number): Promise<Stat[]> => {
+  const config: AxiosRequestConfig = {
+    method: "get",
+    url: `${endpoint}/stats/player/${playerId}`,
+    params: {
+      comps: 1,
+    },
+    headers,
+  };
+
+  try {
+    const { data }: AxiosResponse<EPLPlayer> = await axios(config);
+
+    return data.stats;
+  } catch (e) {
+    showFailureToast(e);
+
+    return [];
   }
 };
 
