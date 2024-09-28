@@ -114,13 +114,23 @@ export default function MatchLineups(props: {
         return (
           <List.Section key={idx} title={lineMap[idx]}>
             {players.map((player) => {
+              const accessories = getAccessories(eventMap[player.id]);
+              if (player.captain) {
+                accessories.unshift({
+                  tag: {
+                    value: "C",
+                    color: Color.Purple,
+                  },
+                });
+              }
+
               return (
                 <List.Item
                   key={player.id}
                   icon={getProfileImg(player.altIds.opta)}
                   title={player.matchShirtNumber.toString()}
                   subtitle={player.name.display}
-                  accessories={getAccessories(eventMap[player.id])}
+                  accessories={accessories}
                   keywords={[player.name.display]}
                 />
               );

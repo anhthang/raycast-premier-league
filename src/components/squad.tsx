@@ -13,7 +13,7 @@ export default function ClubSquad(club: Club) {
     async (season) => {
       return season ? await getStaffs(club.id, season) : undefined;
     },
-    [seasons[0].id],
+    [seasons[0]?.id],
   );
 
   const positions = groupBy(data?.players, "info.position");
