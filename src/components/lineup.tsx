@@ -3,7 +3,7 @@ import { usePromise } from "@raycast/utils";
 import groupBy from "lodash.groupby";
 import { useMemo, useState } from "react";
 import { getFixture } from "../api";
-import { FixtureEvent } from "../types";
+import { Fixture, FixtureEvent } from "../types";
 import { getClubLogo, getProfileImg } from "../utils";
 
 const lineMap: Record<number, string> = {
@@ -75,15 +75,12 @@ function getAccessories(events: FixtureEvent[] = []) {
   return accessories;
 }
 
-export default function MatchLineups(props: {
-  fixture: number;
-  match: string;
-}) {
-  const { data, isLoading } = usePromise(getFixture, [props.fixture]);
+export default function MatchLineups(props: { match: Fixture; title: string }) {
+  const { data, isLoading } = usePromise(getFixture, [props.match.id]);
 
-  const [teamId, setTeamId] = useState<string>(String(data?.teams[0].team.id));
+  const [teamId, setTeamId] = useState<string>(String(data?.teams[0]?.team.id));
   const teamLists = useMemo(
-    () => data?.teamLists.find((t) => t.teamId.toString() === teamId),
+    () => data?.teamLists.find((t) => t?.teamId.toString() === teamId),
     [teamId],
   );
 
@@ -93,7 +90,7 @@ export default function MatchLineups(props: {
     <List
       throttle
       isLoading={isLoading}
-      navigationTitle={`${props.match} | Match Line-ups`}
+      navigationTitle={`${props.title} | Match Line-ups`}
       searchBarAccessory={
         <List.Dropdown tooltip="Change Team" onChange={setTeamId}>
           {data?.teams.map((team) => {
@@ -152,6 +149,7 @@ export default function MatchLineups(props: {
           );
         })}
       </List.Section>
+      {!teamLists && <List.EmptyView title="No pitch view available yet" />}
     </List>
   );
 }

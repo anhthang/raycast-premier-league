@@ -1,6 +1,7 @@
-import { Action, ActionPanel, Color, Image, List } from "@raycast/api";
+import { Action, ActionPanel, Color, Icon, Image, List } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { getMatchCommentary } from "../api";
+import { Fixture } from "../types";
 
 const iconMap: Record<string, string> = {
   "end 1": "time-half",
@@ -18,15 +19,15 @@ const transparentIcons = ["whistle", "goal", "time-full", "time-half"];
 const textLabelIcons = ["end 14", "lineup", "start"];
 
 export default function MatchCommentary(props: {
-  fixture: number;
-  match: string;
+  match: Fixture;
+  title: string;
 }) {
-  const { isLoading, data, pagination } = usePromise(
+  const { data, isLoading, pagination, revalidate } = usePromise(
     (fixtureId) =>
       async ({ page = 0 }) => {
         return getMatchCommentary(fixtureId, page);
       },
-    [props.fixture],
+    [props.match.id],
   );
 
   return (
@@ -34,7 +35,11 @@ export default function MatchCommentary(props: {
       throttle
       isLoading={isLoading}
       pagination={pagination}
-      navigationTitle={`${props.match} | Match Commentary`}
+      navigationTitle={
+        props.match.status === "C"
+          ? `${props.title} | Match Commentary`
+          : `${props.title} | Live Match Commentary`
+      }
     >
       {data?.map((event) => {
         const filename = iconMap[event.type] || "whistle";
@@ -61,8 +66,15 @@ export default function MatchCommentary(props: {
             keywords={[title, subtitle]}
             actions={
               <ActionPanel>
+                {props.match.status === "L" && (
+                  <Action
+                    title="Refresh"
+                    icon={Icon.RotateClockwise}
+                    onAction={revalidate}
+                  />
+                )}
                 <Action.OpenInBrowser
-                  url={`https://www.premierleague.com/match/${props.fixture}`}
+                  url={`https://www.premierleague.com/match/${props.match.id}`}
                 />
               </ActionPanel>
             }
