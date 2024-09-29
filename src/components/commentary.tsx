@@ -72,16 +72,26 @@ export default function MatchCommentary(props: {
     });
   }
 
+  const subtitle =
+    fixture?.status === "L" ? "Live Match Commentary" : "Match Commentary";
+
+  const RefreshMatch = () => (
+    <Action
+      title="Refresh"
+      icon={Icon.RotateClockwise}
+      onAction={() => {
+        refetch();
+        revalidate();
+      }}
+    />
+  );
+
   return (
     <List
       throttle
       isLoading={isLoading}
       pagination={pagination}
-      navigationTitle={
-        props.match.status === "C"
-          ? `${navigationTitle} | Match Commentary`
-          : `${navigationTitle} | Live Match Commentary`
-      }
+      navigationTitle={`${navigationTitle} | ${subtitle}`}
     >
       {fixture && (
         <List.Item
@@ -91,16 +101,7 @@ export default function MatchCommentary(props: {
           accessories={accessories}
           actions={
             <ActionPanel>
-              {props.match.status === "L" && (
-                <Action
-                  title="Refresh"
-                  icon={Icon.RotateClockwise}
-                  onAction={() => {
-                    refetch();
-                    revalidate();
-                  }}
-                />
-              )}
+              {props.match.status === "L" && <RefreshMatch />}
               <Action.OpenInBrowser
                 url={`https://www.premierleague.com/match/${props.match.id}`}
               />
@@ -109,7 +110,7 @@ export default function MatchCommentary(props: {
         />
       )}
 
-      <List.Section title="Match Commentary">
+      <List.Section title={subtitle}>
         {data?.map((event) => {
           const filename = iconMap[event.type] || "whistle";
           const icon: Image.ImageLike = transparentIcons.includes(filename)
@@ -135,6 +136,11 @@ export default function MatchCommentary(props: {
               subtitle={subtitle}
               icon={icon}
               keywords={[title, subtitle]}
+              actions={
+                <ActionPanel>
+                  {props.match.status === "L" && <RefreshMatch />}
+                </ActionPanel>
+              }
             />
           );
         })}
