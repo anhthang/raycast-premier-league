@@ -1,6 +1,6 @@
 # Premier League Changelog
 
-## [Awards & Match Day Essentials] - {RELEASE_DATE}
+## [Awards & Match Day Essentials] - 2024-09-28
 - Added live match commentary and line-up information for each fixture, providing a more immersive experience.
 - Added the "award" command to view a list of Premier League individual and team awards, including winners and statistics.
 - Updated standings to always display detailed statistics, including played matches, goals for/against, goal difference, points, and form.

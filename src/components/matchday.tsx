@@ -73,7 +73,7 @@ export default function Matchday(props: PropsType) {
                 <ActionPanel.Section title="Information">
                   <Action.Push
                     title="Match Commentary"
-                    icon={Icon.BulletPoints}
+                    icon={Icon.Message}
                     target={<MatchCommentary match={match} title={subtitle} />}
                   />
                   <Action.Push
