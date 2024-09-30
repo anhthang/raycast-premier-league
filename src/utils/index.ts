@@ -1,4 +1,6 @@
+import { Color, Icon, Image } from "@raycast/api";
 import { format, parse } from "date-fns";
+import { Fixture } from "../types";
 
 export const awardMap: Record<string, string> = {
   CHAMPIONS: "Premier League Champion",
@@ -77,4 +79,19 @@ export const positionMap: Record<string, string> = {
   D: "Defenders",
   M: "Midfielders",
   F: "Forwards",
+};
+
+export const getMatchStatusIcon = (match: Fixture) => {
+  let icon: Image.ImageLike;
+  if (!match.kickoff.label) {
+    icon = { source: Icon.Clock };
+  } else if (match.status === "L") {
+    icon = { source: Icon.Livestream, tintColor: Color.Red };
+  } else if (match.status === "C") {
+    icon = { source: Icon.CheckCircle, tintColor: Color.Green };
+  } else {
+    icon = Icon.Calendar;
+  }
+
+  return icon;
 };

@@ -2,7 +2,7 @@ import { Action, ActionPanel, Color, Icon, Image, List } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { getFixture, getMatchCommentary } from "../api";
 import { Fixture } from "../types";
-import { convertToLocalTime } from "../utils";
+import { convertToLocalTime, getMatchStatusIcon } from "../utils";
 
 const iconMap: Record<string, string> = {
   "end 1": "time-half",
@@ -97,7 +97,7 @@ export default function MatchCommentary(props: {
         <List.Item
           title={convertToLocalTime(fixture.kickoff.label, "HH:mm") || "TBC"}
           subtitle={`${fixture.ground.name}, ${fixture.ground.city}`}
-          icon={Icon.Clock}
+          icon={getMatchStatusIcon(fixture)}
           accessories={accessories}
           actions={
             <ActionPanel>
