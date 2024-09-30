@@ -1,4 +1,5 @@
 import { Color, Icon, Image } from "@raycast/api";
+import { showFailureToast } from "@raycast/utils";
 import { format, parse } from "date-fns";
 import { Fixture } from "../types";
 
@@ -60,10 +61,16 @@ export const convertToLocalTime = (
 
   const time = label.replace("BST", "+01:00").replace("GMT", "+00:00");
 
-  return format(
-    parse(time, inputFormat, new Date()),
-    outputFormat || "EEE d MMM yyyy, HH:mm",
-  );
+  try {
+    return format(
+      parse(time, inputFormat, new Date()),
+      outputFormat || "EEE d MMM yyyy, HH:mm",
+    );
+  } catch (error) {
+    showFailureToast(error, { message: `Invalid time value: ${label}` });
+
+    return undefined;
+  }
 };
 
 export const getProfileImg = (optaId: string | undefined) => {
