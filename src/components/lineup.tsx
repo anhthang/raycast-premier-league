@@ -1,16 +1,16 @@
 import { Color, List } from "@raycast/api";
-import { usePromise } from "@raycast/utils";
+import { getAvatarIcon, usePromise } from "@raycast/utils";
 import groupBy from "lodash.groupby";
 import { useMemo, useState } from "react";
 import { getFixture } from "../api";
 import { Fixture, FixtureEvent } from "../types";
 import { getClubLogo, getProfileImg } from "../utils";
 
-const lineMap: Record<number, string> = {
-  0: "Goalkeeper",
-  1: "Defenders",
-  2: "Midfielders",
-  3: "Forwards",
+const lineMap: Record<string, string> = {
+  G: "Goalkeeper",
+  D: "Defenders",
+  M: "Midfielders",
+  F: "Forwards",
 };
 
 function getAccessories(events: FixtureEvent[] = []) {
@@ -83,6 +83,10 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
     () => data?.teamLists.find((t) => t?.teamId.toString() === teamId),
     [teamId],
   );
+  const club = useMemo(
+    () => data?.teams.find((t) => t.team.id.toString() === teamId),
+    [teamId],
+  );
 
   const eventMap = groupBy(data?.events, "personId");
 
@@ -106,18 +110,23 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
         </List.Dropdown>
       }
     >
+      {club && (
+        <List.Item
+          title={club.team.club.name}
+          accessories={[{ text: teamLists?.formation.label }]}
+          icon={getClubLogo(club.team.altIds.opta)}
+        />
+      )}
+
       {teamLists?.formation.players.map((group, idx) => {
         const players = teamLists.lineup.filter((p) => group.includes(p.id));
         return (
-          <List.Section key={idx} title={lineMap[idx]}>
+          <List.Section key={idx} title={lineMap[players[0].matchPosition]}>
             {players.map((player) => {
               const accessories = getAccessories(eventMap[player.id]);
               if (player.captain) {
                 accessories.unshift({
-                  tag: {
-                    value: "C",
-                    color: Color.Purple,
-                  },
+                  icon: getAvatarIcon("C"),
                 });
               }
 

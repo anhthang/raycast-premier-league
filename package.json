@@ -78,7 +78,7 @@
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.83.1",
+    "@raycast/api": "^1.83.2",
     "@raycast/utils": "^1.17.0",
     "axios": "^1.7.7",
     "date-fns": "^4.1.0",
@@ -94,11 +94,11 @@
     "@types/react": "^18.3.10",
     "eslint": "^9.11.1",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react": "^7.37.1",
     "prettier": "^3.3.3",
     "react-devtools": "5.2.0",
     "typescript": "^5.6.2",
-    "typescript-eslint": "^8.7.0"
+    "typescript-eslint": "^8.8.0"
   },
   "scripts": {
     "build": "ray build -e dist",
