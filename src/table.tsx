@@ -8,14 +8,14 @@ import { convertToLocalTime, getClubLogo } from "./utils";
 const qualificationMap: Record<string, string> = {
   EU_CL: "UEFA Champions League",
   EU_EL: "UEFA Europa League",
-  EU_ECL: "UEFA Conference League",
+  EU_CF: "UEFA Conference League",
   EN_CH: "EFL Championship",
 };
 
 const qualificationColor: Record<string, string> = {
   EU_CL: Color.Blue,
   EU_EL: Color.Orange,
-  EU_ECL: Color.Green,
+  EU_CF: Color.Green,
   EN_CH: Color.Red,
 };
 

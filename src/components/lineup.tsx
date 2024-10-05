@@ -3,7 +3,7 @@ import { getAvatarIcon, usePromise } from "@raycast/utils";
 import groupBy from "lodash.groupby";
 import { useMemo, useState } from "react";
 import { getFixture } from "../api";
-import { Fixture, FixtureEvent } from "../types";
+import { Fixture, FixtureEvent, Player } from "../types";
 import { getClubLogo, getProfileImg } from "../utils";
 
 const lineMap: Record<string, string> = {
@@ -87,8 +87,32 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
     () => data?.teams.find((t) => t.team.id.toString() === teamId),
     [teamId],
   );
-
   const eventMap = groupBy(data?.events, "personId");
+
+  const children = (players: Player[] = []) => {
+    return players.map((player) => {
+      const accessories = getAccessories(eventMap[player.id]);
+      if (player.captain) {
+        accessories.unshift({
+          icon: getAvatarIcon("C"),
+        });
+      }
+
+      return (
+        <List.Item
+          key={player.id}
+          icon={{
+            source: getProfileImg(player.altIds.opta),
+            fallback: "player-missing.png",
+          }}
+          title={player.matchShirtNumber.toString()}
+          subtitle={player.name.display}
+          accessories={accessories}
+          keywords={[player.name.display]}
+        />
+      );
+    });
+  };
 
   return (
     <List
@@ -103,62 +127,63 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
                 key={team.team.id}
                 value={team.team.id.toString()}
                 title={team.team.club.name}
-                icon={getClubLogo(team.team.altIds.opta)}
+                icon={{
+                  source: getClubLogo(team.team.altIds.opta),
+                  fallback: "default.png",
+                }}
               />
             );
           })}
         </List.Dropdown>
       }
     >
-      {club && (
+      {teamLists && club ? (
         <List.Item
           title={club.team.club.name}
-          accessories={[{ text: teamLists?.formation.label }]}
-          icon={getClubLogo(club.team.altIds.opta)}
+          accessories={[{ text: teamLists?.formation?.label }]}
+          icon={{
+            source: getClubLogo(club.team.altIds.opta),
+            fallback: "default.png",
+          }}
+        />
+      ) : (
+        <List.EmptyView
+          icon="premier-league.svg"
+          title="No pitch view available yet"
         />
       )}
 
-      {teamLists?.formation.players.map((group, idx) => {
-        const players = teamLists.lineup.filter((p) => group.includes(p.id));
-        return (
-          <List.Section key={idx} title={lineMap[players[0].matchPosition]}>
-            {players.map((player) => {
-              const accessories = getAccessories(eventMap[player.id]);
-              if (player.captain) {
-                accessories.unshift({
-                  icon: getAvatarIcon("C"),
-                });
-              }
+      {teamLists?.formation
+        ? teamLists.formation.players.map((group, idx) => {
+            const players = teamLists.lineup.filter((p) =>
+              group.includes(p.id),
+            );
+            return (
+              <List.Section
+                key={idx}
+                title={lineMap[players[0].matchPosition]}
+                children={children(players)}
+              />
+            );
+          })
+        : Object.entries(lineMap).map(([key, position]) => {
+            const players = teamLists?.lineup.filter(
+              (p) => p.matchPosition === key,
+            );
 
-              return (
-                <List.Item
-                  key={player.id}
-                  icon={getProfileImg(player.altIds.opta)}
-                  title={player.matchShirtNumber.toString()}
-                  subtitle={player.name.display}
-                  accessories={accessories}
-                  keywords={[player.name.display]}
-                />
-              );
-            })}
-          </List.Section>
-        );
-      })}
-      <List.Section title="Substitutes">
-        {teamLists?.substitutes.map((player) => {
-          return (
-            <List.Item
-              key={player.id}
-              icon={getProfileImg(player.altIds.opta)}
-              title={player.matchShirtNumber.toString()}
-              subtitle={player.name.display}
-              accessories={getAccessories(eventMap[player.id])}
-              keywords={[player.name.display]}
-            />
-          );
-        })}
-      </List.Section>
-      {!teamLists && <List.EmptyView title="No pitch view available yet" />}
+            return (
+              <List.Section
+                key={key}
+                title={position}
+                children={children(players)}
+              />
+            );
+          })}
+
+      <List.Section
+        title="Substitutes"
+        children={children(teamLists?.substitutes)}
+      />
     </List>
   );
 }

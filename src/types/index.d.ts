@@ -100,7 +100,7 @@ export interface Fixture {
 }
 
 export interface TeamList {
-  formation: Formation;
+  formation?: Formation;
   lineup: Player[];
   substitutes: Player[];
   teamId: number;
