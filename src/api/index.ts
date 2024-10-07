@@ -11,6 +11,7 @@ import {
   Fixture,
   FixtureEvent,
   Player,
+  Report,
   Stat,
   Table,
   Team,
@@ -209,6 +210,32 @@ export const getFixture = async (
     const { data }: AxiosResponse<Fixture> = await axios(config);
 
     return data;
+  } catch (e) {
+    showFailureToast(e);
+
+    return undefined;
+  }
+};
+
+export const getMatchReports = async (
+  fixtureId: number,
+): Promise<Report | undefined> => {
+  const config: AxiosRequestConfig = {
+    method: "get",
+    url: `${endpoint.replace(".com/football", ".com/content")}/PremierLeague/text/EN`,
+    params: {
+      page: 0,
+      references: `FOOTBALL_FIXTURE:${fixtureId}`,
+      tagNames: "Match Report",
+      pageSize: 1,
+    },
+    headers,
+  };
+
+  try {
+    const { data }: AxiosResponse<EPLContent<Report>> = await axios(config);
+
+    return data.content[0];
   } catch (e) {
     showFailureToast(e);
 

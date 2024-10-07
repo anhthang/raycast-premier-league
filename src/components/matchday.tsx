@@ -3,6 +3,7 @@ import { Fixture } from "../types";
 import { convertToLocalTime, getMatchStatusIcon } from "../utils";
 import MatchCommentary from "./commentary";
 import MatchLineups from "./lineup";
+import MatchReports from "./report";
 
 interface PropsType {
   matchday: string;
@@ -61,6 +62,13 @@ export default function Matchday(props: PropsType) {
             actions={
               <ActionPanel>
                 <ActionPanel.Section title="Information">
+                  {match.status === "C" && (
+                    <Action.Push
+                      title="Match Reports"
+                      icon={Icon.Highlight}
+                      target={<MatchReports match={match} title={subtitle} />}
+                    />
+                  )}
                   <Action.Push
                     title="Match Commentary"
                     icon={Icon.Message}

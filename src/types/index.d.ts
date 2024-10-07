@@ -342,3 +342,53 @@ export interface Hit {
   id: string;
   response: Player;
 }
+
+export interface Report {
+  id: number;
+  accountId: number;
+  type: string;
+  title: string;
+  description: null;
+  date: Date;
+  location: string;
+  coordinates: number[];
+  commentsOn: boolean;
+  copyright: null;
+  publishFrom: number;
+  publishTo: number;
+  tags: Tag[];
+  platform: string;
+  language: string;
+  additionalInfo: unknown;
+  canonicalUrl: string;
+  references: Tag[];
+  related: unknown[];
+  metadata: {
+    awayTeamMatchReportLinkText: string;
+    awayTeamMatchReportURL: string;
+    awayTeamOptaID: string;
+    homeTeamMatchReportLinkText: string;
+    homeTeamMatchReportURL: string;
+    homeTeamOptaID: string;
+  };
+  titleTranslations: null;
+  lastModified: number;
+  titleUrlSegment: string;
+  body: string;
+  author: null;
+  subtitle: null;
+  summary: null;
+  hotlinkUrl: null;
+  duration: number;
+  contentSummary: null;
+  leadMedia: null;
+  imageUrl: null;
+  onDemandUrl: null;
+}
+
+export interface Tag {
+  label: null;
+  id: number;
+  type: string;
+  sid: string;
+}
