@@ -21,39 +21,42 @@ export default function EPLAward() {
   );
 
   const getAwardGrids = (awards: Award[] | undefined) => {
-    return awards?.map((award) => {
-      return (
-        <Grid.Item
-          key={award.awardTypeId}
-          title={awardMap[award.award]}
-          subtitle={
-            award.official?.name.display ||
-            award.player?.name.display ||
-            award.apiTeam?.name
-          }
-          content={{
-            source: award.apiTeam
-              ? getClubLogo(award.apiTeam.altIds.opta)
-              : getProfileImg(
-                  award.official?.altIds.opta || award.player?.altIds.opta,
-                ),
-            fallback: "player-missing.png",
-          }}
-          actions={
-            award.player && (
-              <ActionPanel>
-                <Action.Push
-                  title="View Profile"
-                  icon={Icon.Person}
-                  target={<PlayerProfile {...award.player} />}
-                />
-              </ActionPanel>
-            )
-          }
-        />
-      );
-    });
+    return awards
+      ?.sort((a, b) => a.awardTypeId - b.awardTypeId)
+      .map((award) => {
+        return (
+          <Grid.Item
+            key={award.awardTypeId}
+            title={awardMap[award.award]}
+            subtitle={
+              award.official?.name.display ||
+              award.player?.name.display ||
+              award.apiTeam?.name
+            }
+            content={{
+              source: award.apiTeam
+                ? getClubLogo(award.apiTeam.altIds.opta)
+                : getProfileImg(
+                    award.official?.altIds.opta || award.player?.altIds.opta,
+                  ),
+              fallback: "player-missing.png",
+            }}
+            actions={
+              award.player && (
+                <ActionPanel>
+                  <Action.Push
+                    title="View Profile"
+                    icon={Icon.Person}
+                    target={<PlayerProfile {...award.player} />}
+                  />
+                </ActionPanel>
+              )
+            }
+          />
+        );
+      });
   };
+
   return (
     <Grid
       throttle
