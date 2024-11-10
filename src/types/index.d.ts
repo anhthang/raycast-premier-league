@@ -143,8 +143,9 @@ export interface Entry {
 }
 
 export interface Annotation {
-  destination: string;
   type: string;
+  destination: string;
+  description: string;
 }
 
 export interface Stats {

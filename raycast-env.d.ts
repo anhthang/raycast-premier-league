@@ -49,5 +49,3 @@ declare namespace Arguments {
   export type Award = {}
 }
 
-
-
