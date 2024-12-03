@@ -1,5 +1,12 @@
 # Premier League Changelog
 
+## [Enhanced Data and Performance] - 2024-12-02
+- Added match reports for completed fixtures, providing detailed insights into each match.
+- Updated dependencies to address critical security vulnerabilities and removed unnecessary packages.
+- Fixed an issue where teams with long names would not display their correct points.
+- Fixed sorting issues for monthly awards.
+- Corrected the position of qualification metadata and fixed issues with description map lookups.
+
 ## [Awards & Match Day Essentials] - 2024-09-28
 - Added live match commentary and line-up information for each fixture, providing a more immersive experience.
 - Added the "award" command to view a list of Premier League individual and team awards, including winners and statistics.
