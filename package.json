@@ -81,28 +81,29 @@
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.86.1",
-    "@raycast/utils": "^1.18.1",
-    "axios": "^1.7.8",
+    "@raycast/api": "^1.93.1",
+    "@raycast/utils": "^1.19.0",
+    "axios": "^1.8.1",
     "date-fns": "^4.1.0",
-    "json2md": "^2.0.1",
+    "json2md": "^2.0.2",
     "lodash.groupby": "^4.6.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.16.0",
+    "@eslint/js": "^9.21.0",
     "@raycast/eslint-config": "^1.0.11",
     "@types/json2md": "^1.5.4",
     "@types/lodash.groupby": "^4.6.9",
-    "@types/react": "^18.3.12",
-    "eslint": "^9.16.0",
-    "prettier": "^3.4.1",
-    "typescript": "^5.7.2",
-    "typescript-eslint": "^8.17.0"
+    "@types/react": "^19.0.10",
+    "eslint": "^9.21.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.0"
   },
   "scripts": {
     "build": "ray build -e dist",
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint"
-  }
+  },
+  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
 }

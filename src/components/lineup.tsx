@@ -153,7 +153,7 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
         />
       )}
 
-      {teamLists?.formation
+      {teamLists && teamLists.formation
         ? teamLists.formation.players.map((group, idx) => {
             const players = teamLists.lineup.filter((p) =>
               group.includes(p.id),

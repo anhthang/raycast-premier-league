@@ -78,7 +78,7 @@ export const getProfileImg = (optaId: string | undefined) => {
 };
 
 export const getClubLogo = (optaId: string) => {
-  return `https://resources.premierleague.com/premierleague/badges/100/${optaId}@x2.png`;
+  return `https://resources.premierleague.com/premierleague/badges/${optaId}.png`;
 };
 
 export const positionMap: Record<string, string> = {
