@@ -14,6 +14,10 @@
     "Other",
     "Fun"
   ],
+  "platforms": [
+    "macOS",
+    "Windows"
+  ],
   "commands": [
     {
       "name": "table",
@@ -81,29 +85,26 @@
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.93.1",
-    "@raycast/utils": "^1.19.0",
-    "axios": "^1.8.1",
+    "@raycast/api": "^1.103.4",
+    "@raycast/utils": "^2.2.1",
+    "axios": "^1.12.2",
     "date-fns": "^4.1.0",
-    "json2md": "^2.0.2",
+    "json2md": "^2.0.3",
     "lodash.groupby": "^4.6.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.21.0",
-    "@raycast/eslint-config": "^1.0.11",
+    "@raycast/eslint-config": "^2.1.1",
     "@types/json2md": "^1.5.4",
     "@types/lodash.groupby": "^4.6.9",
-    "@types/react": "^19.0.10",
-    "eslint": "^9.21.0",
-    "prettier": "^3.5.3",
-    "typescript": "^5.8.2",
-    "typescript-eslint": "^8.26.0"
+    "@types/react": "^19.2.2",
+    "eslint": "^9.38.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3"
   },
   "scripts": {
-    "build": "ray build -e dist",
+    "build": "ray build",
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint"
-  },
-  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
+  }
 }
