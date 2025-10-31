@@ -1,7 +1,6 @@
 import { showFailureToast } from "@raycast/utils";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import {
-  EPLAward,
   EPLContent,
   EPLFixtureEvents,
   EPLPlayer,
@@ -16,8 +15,12 @@ import {
   Table,
   Team,
 } from "../types";
+import { EPLAward } from "../types/sdp";
 
 const endpoint = "https://footballapi.pulselive.com/football";
+const newendpoint =
+  "https://sdp-prem-prod.premier-league-prod.pulselive.com/api/v1";
+
 const headers = {
   Origin: "https://www.premierleague.com",
 };
@@ -53,13 +56,10 @@ export const getSeasons = async (
   }
 };
 
-export const getAwards = async (compSeasons: string) => {
+export const getAwards = async (competitions: string, seasons: string) => {
   const config: AxiosRequestConfig = {
     method: "GET",
-    url: `${endpoint}/compseasons/${compSeasons}/awards`,
-    params: {
-      altIds: true,
-    },
+    url: `${newendpoint}/competitions/${competitions}/seasons/${seasons}/awards`,
     headers: {
       ...headers,
     },

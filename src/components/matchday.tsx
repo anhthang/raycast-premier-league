@@ -75,7 +75,7 @@ export default function Matchday(props: PropsType) {
                     target={<MatchCommentary match={match} title={subtitle} />}
                   />
                   <Action.Push
-                    title="Match Line-ups"
+                    title="Match Line-Ups"
                     icon={Icon.TwoPeople}
                     target={<MatchLineups match={match} title={subtitle} />}
                   />

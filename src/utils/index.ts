@@ -4,22 +4,22 @@ import { format, parse } from "date-fns";
 import { Fixture } from "../types";
 
 export const awardMap: Record<string, string> = {
-  CHAMPIONS: "Premier League Champion",
-  GAME_CHANGER_AWARD: "Game Changer",
-  GOAL_OF_THE_MONTH: "Goal of the Month",
-  GOAL_OF_THE_SEASON: "Goal of the Season",
-  GOLDEN_BOOT: "Golden Boot",
-  GOLDEN_GLOVE: "Golden Glove",
-  MANAGER_OF_THE_MONTH: "Manager of the Month",
-  MANAGER_OF_THE_SEASON: "Manager of the Season",
-  MOST_IMPROBABLE_AWARD: "Most Improbable Comeback",
-  MOST_POWERFUL_GOAL: "Most Powerful Goal",
-  PLAYER_OF_THE_MONTH: "Player of the Month",
-  PLAYER_OF_THE_SEASON: "Player of the Season",
-  PLAYMAKER: "Playmaker",
-  SAVE_OF_THE_MONTH: "Save of the Month",
-  SAVE_OF_THE_SEASON: "Save of the Season",
-  YNG_PLAYER_OF_THE_SEASON: "Young Player of the Season",
+  // CHAMPIONS: "Premier League Champion",
+  // GAME_CHANGER_AWARD: "Game Changer",
+  GOTM: "Goal of the Month",
+  GOTS: "Goal of the Season",
+  GB: "Golden Boot",
+  GG: "Golden Glove",
+  MOTM: "Manager of the Month",
+  MOTS: "Manager of the Season",
+  MICOTS: "Most Improbable Comeback",
+  MPGOTS: "Most Powerful Goal",
+  POTM: "Player of the Month",
+  POTS: "Player of the Season",
+  PM: "Playmaker",
+  SOTM: "Save of the Month",
+  SOTS: "Save of the Season",
+  YPOTS: "Young Player of the Season",
 };
 
 export const getFlagEmoji = (isoCode?: string) => {
@@ -74,7 +74,7 @@ export const convertToLocalTime = (
 };
 
 export const getProfileImg = (optaId: string | undefined) => {
-  return `https://resources.premierleague.com/premierleague/photos/players/110x140/${optaId}.png`;
+  return `https://resources.premierleague.com/premierleague25/photos/players/110x140/${optaId}.png`;
 };
 
 export const getClubLogo = (optaId: string) => {

@@ -19,7 +19,7 @@ export default function SearchBarSeason(props: {
         return (
           <List.Dropdown.Item
             key={season.id}
-            value={season.id.toString()}
+            value={season.label.slice(0, 4)}
             title={season.label}
           />
         );
