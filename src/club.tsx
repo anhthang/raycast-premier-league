@@ -89,6 +89,7 @@ export default function EPLClub() {
   return (
     <Grid
       throttle
+      columns={4}
       isLoading={isLoading}
       inset={Grid.Inset.Small}
       searchBarAccessory={
@@ -100,9 +101,9 @@ export default function EPLClub() {
           <Grid.Item
             key={team.id}
             title={team.name}
-            subtitle={team.grounds[0].name}
+            subtitle={team.stadium.name}
             content={{
-              source: getClubLogo(team.altIds.opta),
+              source: getClubLogo(team.id),
               fallback: "default.png",
             }}
             actions={

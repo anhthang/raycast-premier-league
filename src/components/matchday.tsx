@@ -1,5 +1,5 @@
 import { Action, ActionPanel, Color, Icon, List } from "@raycast/api";
-import { Fixture } from "../types";
+import { Fixture } from "../types/sdp";
 import { convertToLocalTime, getMatchStatusIcon } from "../utils";
 import MatchCommentary from "./commentary";
 import MatchLineups from "./lineup";
@@ -16,11 +16,15 @@ export default function Matchday(props: PropsType) {
   return (
     <List.Section key={matchday} title={matchday}>
       {matches.map((match) => {
-        const time = convertToLocalTime(match.kickoff.label, "HH:mm");
+        const time = convertToLocalTime(
+          match.kickoff,
+          "HH:mm",
+          "yyyy-MM-dd HH:mm:ss",
+        );
         const icon = getMatchStatusIcon(match);
 
         const accessories: List.Item.Accessory[] = [
-          { text: `${match.ground.name}, ${match.ground.city}` },
+          { text: match.ground },
           {
             icon: {
               source: "stadium.svg",
@@ -29,31 +33,32 @@ export default function Matchday(props: PropsType) {
           },
         ];
 
-        if (match.status === "L") {
+        if (match.period === "L") {
           accessories.unshift({
             tag: {
-              value: match.clock?.label,
+              value: match.clock,
               color: Color.Red,
             },
           });
         }
 
-        const keywords = match.teams
-          .map((t) => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { id, ...rest } = t.team.club;
-            return Object.values(rest);
-          })
-          .flat();
+        const keywords = [
+          match.homeTeam.name,
+          match.homeTeam.shortName,
+          match.homeTeam.abbr,
+          match.awayTeam.name,
+          match.awayTeam.shortName,
+          match.awayTeam.abbr,
+        ];
 
         const subtitle =
-          match.status === "U"
-            ? `${match.teams[0].team.name} - ${match.teams[1].team.name}`
-            : `${match.teams[0].team.name} ${match.teams[0].score} - ${match.teams[1].score} ${match.teams[1].team.name}`;
+          match.period === "PreMatch"
+            ? `${match.homeTeam.name} - ${match.awayTeam.name}`
+            : `${match.homeTeam.name} ${match.homeTeam.score} - ${match.awayTeam.score} ${match.awayTeam.name}`;
 
         return (
           <List.Item
-            key={match.id}
+            key={match.matchId}
             title={time || "TBC"}
             subtitle={subtitle}
             icon={icon}
@@ -62,7 +67,7 @@ export default function Matchday(props: PropsType) {
             actions={
               <ActionPanel>
                 <ActionPanel.Section title="Information">
-                  {match.status === "C" && (
+                  {match.period === "FullTime" && (
                     <Action.Push
                       title="Match Reports"
                       icon={Icon.Highlight}

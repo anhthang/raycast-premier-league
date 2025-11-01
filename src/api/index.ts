@@ -6,7 +6,6 @@ import {
   EPLPlayer,
   EPLPlayerSearch,
   EPLStaff,
-  Fixture,
   FixtureEvent,
   Player,
   Report,
@@ -14,9 +13,12 @@ import {
   Team,
 } from "../types";
 import {
+  Club,
   EPLAward,
   EPLCompetition,
+  EPLPagination,
   EPLStandings,
+  Fixture,
   Season,
   Table,
   TeamForm,
@@ -38,6 +40,7 @@ const pageSize = 50;
 interface Pagination<T> {
   data: T[];
   hasMore: boolean;
+  cursor?: string | null;
 }
 
 export const getSeasons = async (comp: string = "8"): Promise<Season[]> => {
@@ -62,9 +65,6 @@ export const getAwards = async (season: string) => {
   const config: AxiosRequestConfig = {
     method: "GET",
     url: `${newendpoint}/v1/competitions/${competition}/seasons/${season}/awards`,
-    headers: {
-      ...headers,
-    },
   };
 
   try {
@@ -78,27 +78,19 @@ export const getAwards = async (season: string) => {
   }
 };
 
-export const getClubs = async (compSeasons: string): Promise<Team[]> => {
+export const getClubs = async (season: string): Promise<Club[]> => {
   const config: AxiosRequestConfig = {
     method: "GET",
-    url: `${endpoint}/teams`,
+    url: `${newendpoint}/v1/competitions/${competition}/seasons/${season}/teams`,
     params: {
-      page: 0,
-      pageSize: 100,
-      comps: 1,
-      altIds: true,
-      compSeasons,
-    },
-    headers: {
-      ...headers,
-      account: "premierleague",
+      _limit: 60,
     },
   };
 
   try {
-    const { data }: AxiosResponse<EPLContent<Team>> = await axios(config);
+    const { data }: AxiosResponse<EPLPagination<Club>> = await axios(config);
 
-    return data.content;
+    return data.data;
   } catch (e) {
     showFailureToast(e);
 
@@ -183,38 +175,30 @@ export const getTables = async (season: string): Promise<Table[]> => {
   }
 };
 
-export const getFixtures = async (props: {
+export const getMatches = async (props: {
+  season: string;
+  competition: string;
   teams?: string;
-  page: number;
-  sort: string;
-  statuses: string;
-  comps: string;
-  compSeasons: string;
+  _next?: string;
 }): Promise<Pagination<Fixture>> => {
-  if (props.teams === "-1") {
-    delete props.teams;
-  }
-
   const config: AxiosRequestConfig = {
     method: "get",
-    url: `${endpoint}/fixtures`,
+    url: `${newendpoint}/v2/matches`,
     params: {
-      pageSize: 40,
-      altIds: true,
       ...props,
     },
     headers,
   };
 
   try {
-    const { data }: AxiosResponse<EPLContent<Fixture>> = await axios(config);
-    const hasMore = data.pageInfo.numPages > data.pageInfo.page + 1;
+    const { data }: AxiosResponse<EPLPagination<Fixture>> = await axios(config);
+    const hasMore = data.pagination._next ? true : false;
 
-    return { data: data.content, hasMore };
+    return { data: data.data, hasMore, cursor: data.pagination._next };
   } catch (e) {
     showFailureToast(e);
 
-    return { data: [], hasMore: false };
+    return { data: [], hasMore: false, cursor: null };
   }
 };
 

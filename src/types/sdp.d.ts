@@ -1,3 +1,8 @@
+export interface EPLPagination<T> {
+  pagination: Pagination;
+  data: T[];
+}
+
 export interface EPLAward {
   manager_awards: PlayerAward[];
   player_awards: PlayerAward[];
@@ -149,4 +154,25 @@ export interface Qualification {
   label: string;
   positions: string[];
   teamIds?: string[];
+}
+
+export interface Club {
+  name: string;
+  stadium: Stadium;
+  id: string;
+  shortName: string;
+  abbr: string;
+}
+
+export interface Stadium {
+  country: string;
+  city: string;
+  name: string;
+  capacity: number;
+}
+
+export interface Pagination {
+  _limit: number;
+  _prev: null;
+  _next: null;
 }

@@ -2,7 +2,7 @@ import { getPreferenceValues, List } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import groupBy from "lodash.groupby";
 import { useMemo, useState } from "react";
-import { getFixtures, getSeasons, getTeams } from "./api";
+import { getMatches, getSeasons, getTeams } from "./api";
 import Matchday from "./components/matchday";
 import SearchBarCompetition, {
   competitions,
@@ -11,47 +11,46 @@ import { convertToLocalTime } from "./utils";
 
 const { filter } = getPreferenceValues();
 
-export default function EPLResult() {
-  const [comps, setCompetition] = useState<string>(competitions[0].value);
+export default function EPLMatchday() {
+  const [competition, setCompetition] = useState<string>(competitions[0].value);
   const [teams, setTeams] = useState<string>("-1");
 
   const { data: seasons = [] } = usePromise(
     (comp) => getSeasons(comp),
-    [comps],
+    [competition],
   );
 
-  const compSeasons = useMemo(() => seasons[0]?.id.toString(), [seasons]);
+  const season = useMemo(() => seasons[0]?.seasonId, [seasons]);
 
   const { data: clubs } = usePromise(
-    async (seasonId) => {
-      return seasonId ? await getTeams(seasonId) : [];
+    async (season) => {
+      return season ? await getTeams(season) : [];
     },
-    [compSeasons],
+    [season],
   );
 
   const { isLoading, data, pagination } = usePromise(
-    (comps, teams, compSeasons) =>
-      async ({ page = 0 }) => {
-        return getFixtures({
-          teams,
-          page,
-          sort: "desc",
-          statuses: "C",
-          comps,
-          compSeasons,
-        });
-      },
-    [comps, teams, compSeasons],
+    (competition, teams, season) => async ({ cursor: _next }) => {
+      return await getMatches({
+        competition,
+        teams,
+        season,
+        _next,
+      });
+    },
+    [competition, teams, season],
   );
-
+  
   const matchday = groupBy(data, (f) =>
-    convertToLocalTime(f.kickoff.label, "EEE d MMM yyyy"),
+    f.kickoff
+      ? convertToLocalTime(f.kickoff, "EEE d MMM yyyy", "yyyy-MM-dd HH:mm:ss")
+      : "Date To Be Confirmed",
   );
 
   return (
     <List
       throttle
-      isLoading={!clubs || isLoading}
+      isLoading={isLoading}
       pagination={pagination}
       searchBarAccessory={
         <SearchBarCompetition

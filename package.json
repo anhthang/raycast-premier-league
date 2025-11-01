@@ -26,15 +26,9 @@
       "mode": "view"
     },
     {
-      "name": "fixture",
-      "title": "Fixtures",
-      "description": "Explore upcoming and past Premier League match fixtures and details.",
-      "mode": "view"
-    },
-    {
-      "name": "result",
-      "title": "Results",
-      "description": "Access Premier League scores, results, and season archives, as well as matches involving Premier League clubs in other competitions.",
+      "name": "match",
+      "title": "Matches",
+      "description": "View fixtures, results, and archives in one place.",
       "mode": "view"
     },
     {
