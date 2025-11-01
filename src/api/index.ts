@@ -28,11 +28,7 @@ import { competitions } from "../components/searchbar_competition";
 
 const competition = competitions[0].value;
 
-const endpoint = "https:/-prem-prod.premier-league-prod.pulselive.com/api";
-
-const headers = {
-  Origin: "https://www.premierleague.com",
-};
+const endpoint = "https://sdp-prem-prod.premier-league-prod.pulselive.com/api";
 
 interface Pagination<T> {
   data: T[];
@@ -44,7 +40,6 @@ export const getSeasons = async (comp: string = "8"): Promise<Season[]> => {
   const config: AxiosRequestConfig = {
     method: "GET",
     url: `https://resources.premierleague.com/premierleague25/config/season-config/competitions/${comp}.json`,
-    headers,
   };
 
   try {
@@ -55,6 +50,23 @@ export const getSeasons = async (comp: string = "8"): Promise<Season[]> => {
     showFailureToast(e);
 
     return [];
+  }
+};
+
+export const getMatchweek = async (): Promise<number | undefined> => {
+  const config: AxiosRequestConfig = {
+    method: "GET",
+    url: "https://resources.premierleague.com/premierleague25/config/current-gameweek.json",
+  };
+
+  try {
+    const { data } = await axios(config);
+
+    return data.matchweek;
+  } catch (e) {
+    showFailureToast(e);
+
+    return undefined;
   }
 };
 
@@ -184,7 +196,8 @@ export const getTables = async (season: string): Promise<Table[]> => {
 export const getMatches = async (props: {
   season: string;
   competition: string;
-  teams?: string;
+  team?: string;
+  // matchweek?: number;
   _next?: string;
 }): Promise<Pagination<Fixture>> => {
   const config: AxiosRequestConfig = {
@@ -193,7 +206,6 @@ export const getMatches = async (props: {
     params: {
       ...props,
     },
-    headers,
   };
 
   try {
@@ -214,7 +226,6 @@ export const getMatch = async (
   const config: AxiosRequestConfig = {
     method: "get",
     url: `${endpoint}/v2/matches/${matchId}`,
-    headers,
   };
 
   try {
@@ -234,7 +245,6 @@ export const getMatchEvents = async (
   const config: AxiosRequestConfig = {
     method: "get",
     url: `${endpoint}/v1/matches/${matchId}/events`,
-    headers,
   };
 
   try {
@@ -254,7 +264,6 @@ export const getMatchOfficials = async (
   const config: AxiosRequestConfig = {
     method: "get",
     url: `${endpoint}/v1/matches/${matchId}/officials`,
-    headers,
   };
 
   try {
@@ -298,7 +307,6 @@ export const getMatchReports = async (
       tagNames: "Match Report",
       detail: "DETAILED",
     },
-    headers,
   };
 
   try {
@@ -351,7 +359,6 @@ export const getPlayers = async (props: {
     params: {
       ...props,
     },
-    headers,
   };
 
   try {
@@ -399,7 +406,6 @@ export const getPlayersWithTerms = async (
       type: "SDP_FOOTBALL_PLAYER",
       terms,
     },
-    headers,
   };
 
   try {

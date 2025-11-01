@@ -71,9 +71,7 @@ function ClubProfile(props: Club) {
             target={<ClubSquad {...props} />}
           />
           <Action.OpenInBrowser
-            url={`https://www.premierleague.com/clubs/${
-              props.id
-            }/${props.name.replace(/ /g, "-")}/overview`}
+            url={`https://www.premierleague.com/en/clubs/${props.id}/${props.name.replace(/ /g, "-")}/overview`}
           />
         </ActionPanel>
       }

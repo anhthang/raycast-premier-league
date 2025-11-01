@@ -81,7 +81,7 @@ export default function Matchday(props: PropsType) {
                     target={<MatchLineups match={match} title={subtitle} />}
                   />
                   <Action.OpenInBrowser
-                    url={`https://www.premierleague.com/match/${match.matchId}`}
+                    url={`https://www.premierleague.com/en/match/${match.matchId}`}
                   />
                 </ActionPanel.Section>
               </ActionPanel>

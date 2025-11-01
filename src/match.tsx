@@ -13,7 +13,9 @@ const { filter } = getPreferenceValues();
 
 export default function EPLMatchday() {
   const [competition, setCompetition] = useState<string>(competitions[0].value);
-  const [teams, setTeams] = useState<string>("-1");
+  const [team, setTeam] = useState<string>("");
+
+  // const { data: matchweek } = usePromise(getMatchweek);
 
   const { data: seasons = [] } = usePromise(
     (comp) => getSeasons(comp),
@@ -30,16 +32,16 @@ export default function EPLMatchday() {
   );
 
   const { isLoading, data, pagination } = usePromise(
-    (competition, teams, season) =>
+    (competition, team, season) =>
       async ({ cursor: _next }) => {
         return await getMatches({
           competition,
-          teams,
+          team,
           season,
           _next,
         });
       },
-    [competition, teams, season],
+    [competition, team, season],
   );
 
   const matchday = groupBy(data, (f) =>
@@ -56,8 +58,8 @@ export default function EPLMatchday() {
       searchBarAccessory={
         <SearchBarCompetition
           type={filter}
-          selected={teams}
-          onSelect={filter === "competition" ? setCompetition : setTeams}
+          selected={team}
+          onSelect={filter === "competition" ? setCompetition : setTeam}
           data={
             filter === "competition"
               ? competitions

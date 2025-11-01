@@ -111,7 +111,7 @@ export default function MatchCommentary(props: {
             <ActionPanel>
               {fixture.period === "Live" && <RefreshMatch />}
               <Action.OpenInBrowser
-                url={`https://www.premierleague.com/match/${props.match.matchId}`}
+                url={`https://www.premierleague.com/en/match/${props.match.matchId}?tab=commentary`}
               />
             </ActionPanel>
           }

@@ -11,7 +11,7 @@ const positions = ["Goalkeeper", "Defenders", "Midfielders", "Forwards"];
 const cardMap: Record<string, string> = {
   Yellow: "match/card-yellow.svg",
   Red: "match/card-red.svg",
-  YellowRed: "match/card-yellow-red.svg",
+  SecondYellow: "match/card-yellow-red.svg",
 };
 
 function getAccessories(events: MatchEvent[] = []) {
@@ -28,38 +28,26 @@ function getAccessories(events: MatchEvent[] = []) {
       accessories.push({
         icon: {
           source: "match/goal.svg",
-          tintColor: event.goalType === "Goal" ? Color.PrimaryText : Color.Red,
+          tintColor: event.goalType === "Own" ? Color.Red : Color.PrimaryText,
         },
+        tooltip: event.goalType,
         tag,
       });
     }
 
-    // if (event.playerOnId) {
-    //       accessories.push({
-    //       icon: `match/sub-${event.description.toLowerCase()}.svg`,
-    //       tag,
-    //     });
-    // }
-
-    // switch (event.type) {
-    //   case "P":
-    //     accessories.push({
-    //       icon: {
-    //         source: "match/goal.svg",
-    //         tintColor: Color.PrimaryText,
-    //       },
-    //       tag: `${tag} (pen)`,
-    //     });
-    //     break;
-    //   case "S":
-    //     accessories.push({
-    //       icon: `match/sub-${event.description.toLowerCase()}.svg`,
-    //       tag,
-    //     });
-    //     break;
-    //   default:
-    //     break;
-    // }
+    if (event.playerOnId) {
+      if (event.playerId === event.playerOnId) {
+        accessories.push({
+          icon: `match/sub-on.svg`,
+          tag,
+        });
+      } else if (event.playerId === event.playerOffId) {
+        accessories.push({
+          icon: "match/sub-off.svg",
+          tag,
+        });
+      }
+    }
   });
 
   return accessories;
@@ -91,13 +79,26 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
     return homeSquad?.team.id === teamId ? homeSquad : awaySquad;
   }, [teamLists, homeSquad, awaySquad]);
 
+  const subs = matchEvents?.homeTeam.subs
+    .concat(matchEvents?.awayTeam.subs)
+    .map((sub) => {
+      return [
+        {
+          ...sub,
+          playerId: sub.playerOnId,
+        },
+        {
+          ...sub,
+          playerId: sub.playerOffId,
+        },
+      ];
+    })
+    .flat();
+
   const events = matchEvents?.homeTeam.cards
-    .concat(matchEvents?.homeTeam.goals, matchEvents?.homeTeam.subs)
-    .concat(
-      matchEvents?.awayTeam.cards,
-      matchEvents?.awayTeam.goals,
-      matchEvents?.awayTeam.subs,
-    );
+    .concat(matchEvents?.homeTeam.goals)
+    .concat(matchEvents?.awayTeam.cards, matchEvents?.awayTeam.goals)
+    .concat(subs || []);
 
   const eventMap = groupBy(
     events?.sort((a, b) => Number(a.time) - Number(b.time)),
