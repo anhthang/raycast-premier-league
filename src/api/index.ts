@@ -6,20 +6,28 @@ import {
   EPLPlayer,
   EPLPlayerSearch,
   EPLStaff,
-  EPLStanding,
   Fixture,
   FixtureEvent,
   Player,
   Report,
   Stat,
-  Table,
   Team,
 } from "../types";
-import { EPLAward } from "../types/sdp";
+import {
+  EPLAward,
+  EPLCompetition,
+  EPLStandings,
+  Season,
+  Table,
+  TeamForm,
+} from "../types/sdp";
+import { competitions } from "../components/searchbar_competition";
+
+const competition = competitions[0].value;
 
 const endpoint = "https://footballapi.pulselive.com/football";
 const newendpoint =
-  "https://sdp-prem-prod.premier-league-prod.pulselive.com/api/v1";
+  "https://sdp-prem-prod.premier-league-prod.pulselive.com/api";
 
 const headers = {
   Origin: "https://www.premierleague.com",
@@ -32,23 +40,17 @@ interface Pagination<T> {
   hasMore: boolean;
 }
 
-export const getSeasons = async (
-  comps: string = "1",
-): Promise<{ label: string; id: number }[]> => {
+export const getSeasons = async (comp: string = "8"): Promise<Season[]> => {
   const config: AxiosRequestConfig = {
     method: "GET",
-    url: `${endpoint}/competitions/${comps}/compseasons`,
-    params: {
-      page: 0,
-      pageSize: 100,
-    },
+    url: `https://resources.premierleague.com/premierleague25/config/season-config/competitions/${comp}.json`,
     headers,
   };
 
   try {
-    const { data } = await axios(config);
+    const { data }: AxiosResponse<EPLCompetition> = await axios(config);
 
-    return data.content;
+    return data.seasons;
   } catch (e) {
     showFailureToast(e);
 
@@ -56,10 +58,10 @@ export const getSeasons = async (
   }
 };
 
-export const getAwards = async (competitions: string, seasons: string) => {
+export const getAwards = async (season: string) => {
   const config: AxiosRequestConfig = {
     method: "GET",
-    url: `${newendpoint}/competitions/${competitions}/seasons/${seasons}/awards`,
+    url: `${newendpoint}/v1/competitions/${competition}/seasons/${season}/awards`,
     headers: {
       ...headers,
     },
@@ -134,22 +136,44 @@ export const getTeams = async (
   }
 };
 
-export const getTables = async (seasonId: string): Promise<Table[]> => {
+export const getTeamForm = async (season: string): Promise<TeamForm[]> => {
   const config: AxiosRequestConfig = {
     method: "get",
-    url: `${endpoint}/standings`,
-    params: {
-      compSeasons: seasonId,
-      altIds: true,
-      detail: 2,
-      FOOTBALL_COMPETITION: 1,
-      live: true,
-    },
-    headers,
+    url: `${newendpoint}/v1/competitions/${competition}/seasons/${season}/teamform`,
   };
 
   try {
-    const { data }: AxiosResponse<EPLStanding> = await axios(config);
+    const { data }: AxiosResponse<TeamForm[]> = await axios(config);
+
+    return data;
+  } catch (e) {
+    showFailureToast(e);
+
+    return [];
+  }
+};
+
+export const getTables = async (season: string): Promise<Table[]> => {
+  const config: AxiosRequestConfig = {
+    method: "get",
+    url: `${newendpoint}/v5/competitions/${competition}/seasons/${season}/standings`,
+  };
+
+  try {
+    const { data }: AxiosResponse<EPLStandings> = await axios(config);
+
+    const teamform = await getTeamForm(season);
+
+    if (teamform) {
+      data.tables.forEach((table) => {
+        table.entries.forEach((entry) => {
+          const form = teamform.find((tf) => tf.id === entry.team.id);
+          if (form) {
+            Object.assign(entry, form);
+          }
+        });
+      });
+    }
 
     return data.tables;
   } catch (e) {

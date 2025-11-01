@@ -5,7 +5,6 @@ import groupBy from "lodash.groupby";
 import { getAwards } from "./api";
 import { PlayerProfile } from "./components/player";
 import SearchBarSeason from "./components/searchbar_season";
-import { competitions } from "./components/searchbar_competition";
 import { PlayerAward } from "./types/sdp";
 import { awardMap, convertToLocalTime, getProfileImg } from "./utils";
 
@@ -13,8 +12,7 @@ export default function EPLAward() {
   const [seasonId, setSeasonId] = useState<string>();
 
   const { data, isLoading } = usePromise(
-    async (season) =>
-      season ? await getAwards(competitions[0].value, season) : undefined,
+    async (season) => (season ? await getAwards(season) : undefined),
     [seasonId],
   );
 
