@@ -1,7 +1,7 @@
 import { Color, List } from "@raycast/api";
 import { getAvatarIcon, usePromise } from "@raycast/utils";
 import { useMemo, useState } from "react";
-import { getMatchEvents, getMatchLineups, getTeamSquad } from "../api";
+import { getMatchEvents, getMatchLineups } from "../api";
 import { Fixture, MatchEvent, Player } from "../types";
 import { getClubLogo, getProfileImg } from "../utils";
 import groupBy from "lodash.groupby";
@@ -57,27 +57,17 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
   const { match, title } = props;
 
   const { data, isLoading } = usePromise(getMatchLineups, [match.matchId]);
-  const { data: homeSquad } = usePromise(getTeamSquad, [
-    match.season,
-    match.homeTeam.id,
-  ]);
-  const { data: awaySquad } = usePromise(getTeamSquad, [
-    match.season,
-    match.awayTeam.id,
-  ]);
-
   const { data: matchEvents } = usePromise(getMatchEvents, [match.matchId]);
 
   const [teamId, setTeamId] = useState<string>(match.homeTeam.id);
-  const teamLists = useMemo(
-    () =>
-      data?.home_team.teamId === teamId ? data.home_team : data?.away_team,
-    [teamId, data],
-  );
 
-  const club = useMemo(() => {
-    return homeSquad?.team.id === teamId ? homeSquad : awaySquad;
-  }, [teamLists, homeSquad, awaySquad]);
+  const teamLineup = useMemo(() => {
+    return data?.home_team.teamId === teamId ? data.home_team : data?.away_team;
+  }, [teamId, data]);
+
+  const getDisplayName = (player: Player) => {
+    return player.knownName || `${player.firstName} ${player.lastName}`;
+  };
 
   const subs = matchEvents?.homeTeam.subs
     .concat(matchEvents?.awayTeam.subs)
@@ -122,9 +112,8 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
             fallback: "player-missing.png",
           }}
           title={String(player.shirtNum)}
-          subtitle={player.name.display}
+          subtitle={getDisplayName(player)}
           accessories={accessories}
-          keywords={[player.name.display]}
         />
       );
     });
@@ -153,15 +142,23 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
         </List.Dropdown>
       }
     >
-      {teamLists && club ? (
-        <List.Item
-          title={club.team.name}
-          accessories={[{ text: teamLists.formation.formation }]}
-          icon={{
-            source: getClubLogo(club.team.id),
-            fallback: "default.png",
-          }}
-        />
+      {teamLineup ? (
+        <List.Section title="Manager">
+          <List.Item
+            title={
+              teamLineup.managers[0]
+                ? getDisplayName(teamLineup.managers[0])
+                : "Manager"
+            }
+            accessories={[
+              { text: teamLineup.formation.formation, tooltip: "Formation" },
+            ]}
+            icon={{
+              source: getProfileImg(teamLineup.managers[0]?.id),
+              fallback: "default.png",
+            }}
+          />
+        </List.Section>
       ) : (
         <List.EmptyView
           icon="premier-league.svg"
@@ -169,9 +166,12 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
         />
       )}
 
-      {teamLists && teamLists.formation
-        ? teamLists.formation.lineup.map((group, idx) => {
-            const players = club?.players?.filter((p) => group.includes(p.id));
+      {teamLineup && teamLineup.formation
+        ? teamLineup.formation.lineup.map((group, idx) => {
+            const players = teamLineup?.players.filter((p) =>
+              group.includes(p.id),
+            );
+
             return (
               <List.Section
                 key={idx}
@@ -181,7 +181,7 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
             );
           })
         : positions.map((position) => {
-            const players = club?.players?.filter(
+            const players = teamLineup?.players.filter(
               (p) => p.position === position,
             );
 
@@ -197,8 +197,8 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
       <List.Section
         title="Substitutes"
         children={children(
-          club?.players?.filter((p) =>
-            teamLists?.formation.subs.includes(p.id),
+          teamLineup?.players.filter((p) =>
+            teamLineup?.formation.subs.includes(p.id),
           ),
         )}
       />

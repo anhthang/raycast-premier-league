@@ -44,11 +44,11 @@ export default function EPLTables() {
       isLoading={isLoading}
       isShowingDetail={true}
     >
-      {tables?.map((table) => {
+      {tables?.map((table, idx) => {
         const isEnded = table.entries.every((e) => e.overall.played === 38);
 
         return (
-          <List.Section>
+          <List.Section key={idx}>
             {table.entries.map((entry) => {
               const { overall, team, form, next } = entry;
 

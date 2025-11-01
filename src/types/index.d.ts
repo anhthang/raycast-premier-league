@@ -219,10 +219,10 @@ export interface Pagination {
 }
 
 export interface TeamLineup {
-  players: string[];
+  players: Player[];
   teamId: string;
   formation: Formation;
-  managers: string[];
+  managers: Player[];
 }
 
 export interface Formation {
