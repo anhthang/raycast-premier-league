@@ -16,11 +16,7 @@ export default function Matchday(props: PropsType) {
   return (
     <List.Section key={matchday} title={matchday}>
       {matches.map((match) => {
-        const time = convertToLocalTime(
-          match.kickoff,
-          "HH:mm",
-          "yyyy-MM-dd HH:mm:ss",
-        );
+        const time = convertToLocalTime(match.kickoff, "HH:mm");
         const icon = getMatchStatusIcon(match);
 
         const accessories: List.Item.Accessory[] = [
@@ -80,7 +76,7 @@ export default function Matchday(props: PropsType) {
                     target={<MatchCommentary match={match} title={subtitle} />}
                   />
                   <Action.Push
-                    title="Match Line-Ups"
+                    title="Match Lineups"
                     icon={Icon.TwoPeople}
                     target={<MatchLineups match={match} title={subtitle} />}
                   />

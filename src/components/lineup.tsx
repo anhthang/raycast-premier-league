@@ -1,98 +1,113 @@
 import { Color, List } from "@raycast/api";
 import { getAvatarIcon, usePromise } from "@raycast/utils";
-import groupBy from "lodash.groupby";
 import { useMemo, useState } from "react";
-import { getFixture } from "../api";
-import { Fixture, FixtureEvent, Player } from "../types";
+import { getMatchEvents, getMatchLineups, getTeamSquad } from "../api";
+import { Fixture, MatchEvent, Player } from "../types/sdp";
 import { getClubLogo, getProfileImg } from "../utils";
+import groupBy from "lodash.groupby";
 
-const lineMap: Record<string, string> = {
-  G: "Goalkeeper",
-  D: "Defenders",
-  M: "Midfielders",
-  F: "Forwards",
+const positions = ["Goalkeeper", "Defenders", "Midfielders", "Forwards"];
+
+const cardMap: Record<string, string> = {
+  Yellow: "match/card-yellow.svg",
+  Red: "match/card-red.svg",
+  YellowRed: "match/card-yellow-red.svg",
 };
 
-function getAccessories(events: FixtureEvent[] = []) {
+function getAccessories(events: MatchEvent[] = []) {
   const accessories: List.Item.Accessory[] = [];
 
   events.forEach((event) => {
-    const tag = event.clock?.label?.replace("'00", "'");
+    const tag = `${event.time}'`;
 
-    switch (event.type) {
-      case "B":
-        {
-          let icon;
-          if (event.description === "Y") {
-            icon = "match/card-yellow.svg";
-          } else if (event.description === "R") {
-            icon = "match/card-red.svg";
-          } else if (event.description === "YR") {
-            icon = "match/card-yellow-red.svg";
-          }
-
-          accessories.push({ icon, tag });
-        }
-        break;
-      case "G":
-        accessories.push({
-          icon: {
-            source: "match/goal.svg",
-            tintColor: Color.PrimaryText,
-          },
-          tag,
-        });
-        break;
-      case "O":
-        accessories.push({
-          icon: {
-            source: "match/goal.svg",
-            tintColor: Color.Red,
-          },
-          tag,
-        });
-        break;
-      case "P":
-        accessories.push({
-          icon: {
-            source: "match/goal.svg",
-            tintColor: Color.PrimaryText,
-          },
-          tag: `${tag} (pen)`,
-        });
-        break;
-      case "S":
-        accessories.push({
-          icon: `match/sub-${event.description.toLowerCase()}.svg`,
-          tag,
-        });
-        break;
-      default:
-        break;
+    if (event.type) {
+      accessories.push({ icon: cardMap[event.type], tag });
     }
+
+    if (event.goalType) {
+      accessories.push({
+        icon: {
+          source: "match/goal.svg",
+          tintColor: event.goalType === "Goal" ? Color.PrimaryText : Color.Red,
+        },
+        tag,
+      });
+    }
+
+    // if (event.playerOnId) {
+    //       accessories.push({
+    //       icon: `match/sub-${event.description.toLowerCase()}.svg`,
+    //       tag,
+    //     });
+    // }
+
+    // switch (event.type) {
+    //   case "P":
+    //     accessories.push({
+    //       icon: {
+    //         source: "match/goal.svg",
+    //         tintColor: Color.PrimaryText,
+    //       },
+    //       tag: `${tag} (pen)`,
+    //     });
+    //     break;
+    //   case "S":
+    //     accessories.push({
+    //       icon: `match/sub-${event.description.toLowerCase()}.svg`,
+    //       tag,
+    //     });
+    //     break;
+    //   default:
+    //     break;
+    // }
   });
 
   return accessories;
 }
 
 export default function MatchLineups(props: { match: Fixture; title: string }) {
-  const { data, isLoading } = usePromise(getFixture, [props.match.id]);
+  const { match, title } = props;
 
-  const [teamId, setTeamId] = useState<string>(String(data?.teams[0]?.team.id));
+  const { data, isLoading } = usePromise(getMatchLineups, [match.matchId]);
+  const { data: homeSquad } = usePromise(getTeamSquad, [
+    match.season,
+    match.homeTeam.id,
+  ]);
+  const { data: awaySquad } = usePromise(getTeamSquad, [
+    match.season,
+    match.awayTeam.id,
+  ]);
+
+  const { data: matchEvents } = usePromise(getMatchEvents, [match.matchId]);
+
+  const [teamId, setTeamId] = useState<string>(match.homeTeam.id);
   const teamLists = useMemo(
-    () => data?.teamLists.find((t) => t?.teamId.toString() === teamId),
-    [teamId],
+    () =>
+      data?.home_team.teamId === teamId ? data.home_team : data?.away_team,
+    [teamId, data],
   );
-  const club = useMemo(
-    () => data?.teams.find((t) => t.team.id.toString() === teamId),
-    [teamId],
+
+  const club = useMemo(() => {
+    return homeSquad?.team.id === teamId ? homeSquad : awaySquad;
+  }, [teamLists, homeSquad, awaySquad]);
+
+  const events = matchEvents?.homeTeam.cards
+    .concat(matchEvents?.homeTeam.goals, matchEvents?.homeTeam.subs)
+    .concat(
+      matchEvents?.awayTeam.cards,
+      matchEvents?.awayTeam.goals,
+      matchEvents?.awayTeam.subs,
+    );
+
+  const eventMap = groupBy(
+    events?.sort((a, b) => Number(a.time) - Number(b.time)),
+    "playerId",
   );
-  const eventMap = groupBy(data?.events, "personId");
 
   const children = (players: Player[] = []) => {
     return players.map((player) => {
-      const accessories = getAccessories(eventMap[player.id]);
-      if (player.captain) {
+      const accessories = getAccessories(eventMap[player.id.toString()]);
+      if (player.isCaptain) {
         accessories.unshift({
           icon: getAvatarIcon("C"),
         });
@@ -102,10 +117,10 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
         <List.Item
           key={player.id}
           icon={{
-            source: getProfileImg(player.altIds.opta),
+            source: getProfileImg(player.id),
             fallback: "player-missing.png",
           }}
-          title={player.matchShirtNumber.toString()}
+          title={String(player.shirtNum)}
           subtitle={player.name.display}
           accessories={accessories}
           keywords={[player.name.display]}
@@ -118,17 +133,17 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
     <List
       throttle
       isLoading={isLoading}
-      navigationTitle={`${props.title} | Match Line-ups`}
+      navigationTitle={`${title} | Match Lineups`}
       searchBarAccessory={
         <List.Dropdown tooltip="Change Team" onChange={setTeamId}>
-          {data?.teams.map((team) => {
+          {[match.homeTeam, match.awayTeam].map((team) => {
             return (
               <List.Dropdown.Item
-                key={team.team.id}
-                value={team.team.id.toString()}
-                title={team.team.club.name}
+                key={team.id}
+                value={team.id}
+                title={team.name}
                 icon={{
-                  source: getClubLogo(team.team.altIds.opta),
+                  source: getClubLogo(team.id),
                   fallback: "default.png",
                 }}
               />
@@ -139,10 +154,10 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
     >
       {teamLists && club ? (
         <List.Item
-          title={club.team.club.name}
-          accessories={[{ text: teamLists?.formation?.label }]}
+          title={club.team.name}
+          accessories={[{ text: teamLists.formation.formation }]}
           icon={{
-            source: getClubLogo(club.team.altIds.opta),
+            source: getClubLogo(club.team.id),
             fallback: "default.png",
           }}
         />
@@ -154,26 +169,24 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
       )}
 
       {teamLists && teamLists.formation
-        ? teamLists.formation.players.map((group, idx) => {
-            const players = teamLists.lineup.filter((p) =>
-              group.includes(p.id),
-            );
+        ? teamLists.formation.lineup.map((group, idx) => {
+            const players = club?.players?.filter((p) => group.includes(p.id));
             return (
               <List.Section
                 key={idx}
-                title={lineMap[players[0].matchPosition]}
+                title={players?.[0]?.position || "Unknown"}
                 children={children(players)}
               />
             );
           })
-        : Object.entries(lineMap).map(([key, position]) => {
-            const players = teamLists?.lineup.filter(
-              (p) => p.matchPosition === key,
+        : positions.map((position) => {
+            const players = club?.players?.filter(
+              (p) => p.position === position,
             );
 
             return (
               <List.Section
-                key={key}
+                key={position}
                 title={position}
                 children={children(players)}
               />
@@ -182,7 +195,11 @@ export default function MatchLineups(props: { match: Fixture; title: string }) {
 
       <List.Section
         title="Substitutes"
-        children={children(teamLists?.substitutes)}
+        children={children(
+          club?.players?.filter((p) =>
+            teamLists?.formation.subs.includes(p.id),
+          ),
+        )}
       />
     </List>
   );

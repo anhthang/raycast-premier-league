@@ -1,11 +1,16 @@
+export interface EPLContent<T> {
+  content: T[];
+  pageInfo: PageInfo;
+}
+
 export interface EPLPagination<T> {
   pagination: Pagination;
   data: T[];
 }
 
 export interface EPLAward {
-  manager_awards: PlayerAward[];
-  player_awards: PlayerAward[];
+  manager_awards: Player[];
+  player_awards: Player[];
 }
 
 export interface EPLStandings {
@@ -15,6 +20,27 @@ export interface EPLStandings {
   competition: Competition;
   deductions: unknown[];
   live: boolean;
+}
+
+export interface EPLMatchEvents {
+  awayTeam: TeamEvents;
+  homeTeam: TeamEvents;
+}
+
+export interface EPLMatchLineups {
+  home_team: TeamLineup;
+  away_team: TeamLineup;
+}
+
+export interface EPLMatchOfficials {
+  matchId: string;
+  matchOfficials: MatchOfficial[];
+}
+
+export interface EPLTeamSquad {
+  players: Player[];
+  id: EPLCompetition;
+  team: Team;
 }
 
 export interface Career {
@@ -45,11 +71,11 @@ export interface Dates {
   birth: Date;
 }
 
-export interface PlayerAward {
+export interface Player {
   currentTeam: Team;
   date: string;
   country: Country;
-  shirtNum: number;
+  shirtNum: string | number;
   weight: number;
   dates: Dates;
   type: string;
@@ -57,10 +83,15 @@ export interface PlayerAward {
   name: AwardName;
   id: string;
   position: string;
-  preferredFoot: string;
+  preferredFoot?: string;
   height: number;
   career: Career;
   role: string;
+  firstName: string;
+  lastName: string;
+  isCaptain: boolean;
+  knownName?: string;
+  subPosition?: string;
 }
 
 export interface AwardName {
@@ -117,7 +148,7 @@ export interface Fixture {
   competition: string;
   clock: string;
   kickoffTimezoneString: string;
-  seasonId: string;
+  season: string;
   homeTeam: Team;
   ground: string;
   resultType: string;
@@ -132,6 +163,7 @@ export interface SeasonInfo {
 
 export interface EPLCompetition {
   competitionId: string;
+  seasonId: string;
   competitionLabel: string;
   seasons: Season[];
 }
@@ -175,4 +207,131 @@ export interface Pagination {
   _limit: number;
   _prev: null;
   _next: null;
+}
+
+export interface TeamLineup {
+  players: string[];
+  teamId: string;
+  formation: Formation;
+  managers: string[];
+}
+
+export interface Formation {
+  subs: string[];
+  teamId: string;
+  lineup: Array<string[]>;
+  formation: string;
+}
+
+export interface TeamEvents {
+  cards: MatchEvent[];
+  subs: MatchEvent[];
+  name: string;
+  id: string;
+  shortName: string;
+  goals: MatchEvent[];
+}
+
+export interface MatchEvent {
+  period: string;
+  time: string;
+  type: string;
+  playerId: string;
+  timestamp: string;
+  goalType: string;
+  assistPlayerId: null | string;
+  playerOnId: string;
+  playerOffId: string;
+}
+
+export interface MatchCommentary {
+  player1: string;
+  team1: string;
+  comment: string;
+  time: string;
+  type: string;
+  timestamp: Date;
+  player2?: string;
+  team2?: string;
+}
+
+export interface MatchOfficial {
+  official: Official;
+  type: string;
+}
+
+export interface Official {
+  firstName: string;
+  lastName: string;
+  name: string;
+}
+
+export interface EPLContentReport {
+  pageInfo: PageInfo;
+  content: Content[];
+}
+
+export interface Content {
+  id: number;
+  accountId: number;
+  type: string;
+  title: string;
+  description: null;
+  date: Date;
+  location: string;
+  coordinates: number[];
+  commentsOn: boolean;
+  copyright: null;
+  publishFrom: number;
+  publishTo: number;
+  tags: Tag[];
+  platform: string;
+  language: string;
+  additionalInfo: unknown;
+  canonicalUrl: string;
+  references: Reference[];
+  related: unknown[];
+  metadata: Metadata;
+  titleTranslations: null;
+  lastModified: number;
+  titleUrlSegment: string;
+  visibilityOrder: unknown[];
+  body: string;
+  author: null;
+  subtitle: null;
+  summary: null;
+  hotlinkUrl: null;
+  duration: number;
+  contentSummary: null;
+  leadMedia: null;
+  imageUrl: null;
+  onDemandUrl: null;
+}
+
+export interface Metadata {
+  awayTeamMatchReportLinkText: string;
+  awayTeamMatchReportURL: string;
+  awayTeamOptaID: string;
+  homeTeamMatchReportLinkText: string;
+  homeTeamMatchReportURL: string;
+  homeTeamOptaID: string;
+}
+
+export interface Reference {
+  label: null;
+  id: number;
+  type: string;
+  sid: string;
+}
+
+export interface Tag {
+  id: number;
+  label: string;
+}
+
+export interface PageInfo {
+  page: number;
+  numPages: number;
+  pageSize: number;
+  numEntries: number;
 }

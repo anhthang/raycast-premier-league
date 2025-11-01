@@ -1,7 +1,7 @@
 import { Action, ActionPanel, Color, Icon, Image, List } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
-import { getFixture, getMatchCommentary } from "../api";
-import { Fixture } from "../types";
+import { getMatch, getMatchCommentary, getMatchOfficials } from "../api";
+import { Fixture } from "../types/sdp";
 import { convertToLocalTime, getMatchStatusIcon } from "../utils";
 
 const iconMap: Record<string, string> = {
@@ -23,21 +23,25 @@ export default function MatchCommentary(props: {
   match: Fixture;
   title: string;
 }) {
-  const { data: fixture, revalidate: refetch } = usePromise(getFixture, [
-    props.match.id,
+  const { data: fixture, revalidate: refetch } = usePromise(getMatch, [
+    props.match.matchId,
   ]);
   const { data, isLoading, pagination, revalidate } = usePromise(
-    (fixtureId) =>
-      async ({ page = 0 }) => {
-        return getMatchCommentary(fixtureId, page);
+    (matchId) =>
+      async ({ cursor }) => {
+        return getMatchCommentary(matchId, cursor);
       },
-    [props.match.id],
+    [props.match.matchId],
   );
 
+  const { data: referee } = usePromise(getMatchOfficials, [
+    props.match.matchId,
+  ]);
+
   const navigationTitle =
-    !fixture || fixture.status === "U"
+    !fixture || fixture.period === "PreMatch"
       ? props.title
-      : `${fixture.teams[0].team.name} ${fixture.teams[0].score} - ${fixture.teams[1].score} ${fixture.teams[1].team.name}`;
+      : `${fixture.homeTeam.name} ${fixture.homeTeam.score} - ${fixture.awayTeam.score} ${fixture.awayTeam.name}`;
 
   const accessories: List.Item.Accessory[] = [];
 
@@ -49,31 +53,35 @@ export default function MatchCommentary(props: {
     });
   }
 
-  if (fixture?.matchOfficials.length) {
-    const referee = fixture?.matchOfficials.find((o) => o.role === "MAIN");
-    const varReferee = fixture?.matchOfficials.find((o) => o.role === "VAR");
+  if (referee?.matchOfficials.length) {
+    const mainReferee = referee.matchOfficials.find(
+      (o) => o.type === "Referee",
+    );
+    const varReferee = referee.matchOfficials.find(
+      (o) => o.type === "Video Assistant Referee",
+    );
     accessories.push(
       {
-        text: referee?.name.display,
-        tooltip: "Referee",
+        text: mainReferee?.official.name,
+        tooltip: mainReferee?.type,
         icon: Icon.Stopwatch,
       },
       {
-        text: varReferee?.name.display,
-        tooltip: "VAR",
+        text: varReferee?.official.name,
+        tooltip: varReferee?.type,
         icon: Icon.Video,
       },
     );
   }
 
-  if (fixture?.status === "U") {
+  if (fixture?.period === "PreMatch") {
     accessories.push({
-      date: new Date(Number(fixture?.kickoff.millis)),
+      date: new Date(Number(fixture?.kickoff)),
     });
   }
 
   const subtitle =
-    fixture?.status === "L" ? "Live Match Commentary" : "Match Commentary";
+    fixture?.period === "Live" ? "Live Match Commentary" : "Match Commentary";
 
   const RefreshMatch = () => (
     <Action
@@ -95,15 +103,15 @@ export default function MatchCommentary(props: {
     >
       {fixture && (
         <List.Item
-          title={convertToLocalTime(fixture.kickoff.label, "HH:mm") || "TBC"}
-          subtitle={`${fixture.ground.name}, ${fixture.ground.city}`}
+          title={convertToLocalTime(fixture.kickoff, "HH:mm") || "TBC"}
+          subtitle={fixture.ground}
           icon={getMatchStatusIcon(fixture)}
           accessories={accessories}
           actions={
             <ActionPanel>
-              {props.match.status === "L" && <RefreshMatch />}
+              {fixture.period === "Live" && <RefreshMatch />}
               <Action.OpenInBrowser
-                url={`https://www.premierleague.com/match/${props.match.id}`}
+                url={`https://www.premierleague.com/match/${props.match.matchId}`}
               />
             </ActionPanel>
           }
@@ -111,7 +119,7 @@ export default function MatchCommentary(props: {
       )}
 
       <List.Section title={subtitle}>
-        {data?.map((event) => {
+        {data?.map((event, idx) => {
           const filename = iconMap[event.type] || "whistle";
           const icon: Image.ImageLike = transparentIcons.includes(filename)
             ? {
@@ -122,23 +130,23 @@ export default function MatchCommentary(props: {
             : `match/${filename}.svg`;
 
           const title = textLabelIcons.includes(event.type)
-            ? event.text
-            : `${event.time?.label}'`;
+            ? event.comment
+            : event.time;
 
           const subtitle = textLabelIcons.includes(event.type)
             ? ""
-            : event.text;
+            : event.comment;
 
           return (
             <List.Item
-              key={event.id}
+              key={idx}
               title={title}
               subtitle={subtitle}
               icon={icon}
               keywords={[title, subtitle]}
               actions={
                 <ActionPanel>
-                  {props.match.status === "L" && <RefreshMatch />}
+                  {fixture?.period === "Live" && <RefreshMatch />}
                 </ActionPanel>
               }
             />

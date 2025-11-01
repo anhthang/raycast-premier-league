@@ -51,11 +51,7 @@ export const convertToLocalTime = (
 ) => {
   if (!label) return undefined;
 
-  const inputFormat =
-    customFormat ??
-    (label.includes("BST") || label.includes("GMT")
-      ? "EEE d MMM yyyy, HH:mm XXX"
-      : "EEE d MMM yyyy");
+  const inputFormat = customFormat ?? "yyyy-MM-dd HH:mm:ss";
 
   if (inputFormat.length === 14 && outputFormat?.length === 5) return undefined;
 
@@ -94,7 +90,7 @@ export const getMatchStatusIcon = (match: Fixture) => {
     icon = { source: Icon.Clock };
   } else if (match.period === "L") {
     icon = { source: Icon.Livestream, tintColor: Color.Red };
-  } else if (match.period === "FullMatch") {
+  } else if (match.period === "FullTime") {
     icon = { source: Icon.CheckCircle, tintColor: Color.Green };
   } else {
     icon = Icon.Calendar;

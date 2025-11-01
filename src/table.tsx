@@ -222,7 +222,6 @@ export default function EPLTables() {
                                 text={convertToLocalTime(
                                   next.kickoff,
                                   "EEE d MMM yyyy, HH:mm",
-                                  "yyyy-MM-dd'T'HH:mm:ss",
                                 )}
                               />
                               <List.Item.Detail.Metadata.Label

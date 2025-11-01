@@ -30,20 +30,21 @@ export default function EPLMatchday() {
   );
 
   const { isLoading, data, pagination } = usePromise(
-    (competition, teams, season) => async ({ cursor: _next }) => {
-      return await getMatches({
-        competition,
-        teams,
-        season,
-        _next,
-      });
-    },
+    (competition, teams, season) =>
+      async ({ cursor: _next }) => {
+        return await getMatches({
+          competition,
+          teams,
+          season,
+          _next,
+        });
+      },
     [competition, teams, season],
   );
-  
+
   const matchday = groupBy(data, (f) =>
     f.kickoff
-      ? convertToLocalTime(f.kickoff, "EEE d MMM yyyy", "yyyy-MM-dd HH:mm:ss")
+      ? convertToLocalTime(f.kickoff, "EEE d MMM yyyy")
       : "Date To Be Confirmed",
   );
 

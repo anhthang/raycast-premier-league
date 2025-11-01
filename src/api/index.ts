@@ -1,12 +1,9 @@
 import { showFailureToast } from "@raycast/utils";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import {
-  EPLContent,
-  EPLFixtureEvents,
   EPLPlayer,
   EPLPlayerSearch,
   EPLStaff,
-  FixtureEvent,
   Player,
   Report,
   Stat,
@@ -16,9 +13,15 @@ import {
   Club,
   EPLAward,
   EPLCompetition,
+  EPLContent,
+  EPLMatchEvents,
+  EPLMatchLineups,
+  EPLMatchOfficials,
   EPLPagination,
   EPLStandings,
+  EPLTeamSquad,
   Fixture,
+  MatchCommentary,
   Season,
   Table,
   TeamForm,
@@ -145,6 +148,26 @@ export const getTeamForm = async (season: string): Promise<TeamForm[]> => {
   }
 };
 
+export const getTeamSquad = async (
+  season: string,
+  teamId: string,
+): Promise<EPLTeamSquad | undefined> => {
+  const config: AxiosRequestConfig = {
+    method: "get",
+    url: `${newendpoint}/v2/competitions/${competition}/seasons/${season}/teams/${teamId}/squad`,
+  };
+
+  try {
+    const { data }: AxiosResponse<EPLTeamSquad> = await axios(config);
+
+    return data;
+  } catch (e) {
+    showFailureToast(e);
+
+    return undefined;
+  }
+};
+
 export const getTables = async (season: string): Promise<Table[]> => {
   const config: AxiosRequestConfig = {
     method: "get",
@@ -202,15 +225,12 @@ export const getMatches = async (props: {
   }
 };
 
-export const getFixture = async (
-  fixtureId: number,
+export const getMatch = async (
+  matchId: string,
 ): Promise<Fixture | undefined> => {
   const config: AxiosRequestConfig = {
     method: "get",
-    url: `${endpoint}/fixtures/${fixtureId}`,
-    params: {
-      altIds: true,
-    },
+    url: `${newendpoint}/v2/matches/${matchId}`,
     headers,
   };
 
@@ -225,17 +245,75 @@ export const getFixture = async (
   }
 };
 
+export const getMatchEvents = async (
+  matchId: string,
+): Promise<EPLMatchEvents | undefined> => {
+  const config: AxiosRequestConfig = {
+    method: "get",
+    url: `${newendpoint}/v1/matches/${matchId}/events`,
+    headers,
+  };
+
+  try {
+    const { data }: AxiosResponse<EPLMatchEvents> = await axios(config);
+
+    return data;
+  } catch (e) {
+    showFailureToast(e);
+
+    return undefined;
+  }
+};
+
+export const getMatchOfficials = async (
+  matchId: string,
+): Promise<EPLMatchOfficials | undefined> => {
+  const config: AxiosRequestConfig = {
+    method: "get",
+    url: `${newendpoint}/v1/matches/${matchId}/officials`,
+    headers,
+  };
+
+  try {
+    const { data }: AxiosResponse<EPLMatchOfficials> = await axios(config);
+
+    return data;
+  } catch (e) {
+    showFailureToast(e);
+
+    return undefined;
+  }
+};
+
+export const getMatchLineups = async (
+  matchId: string,
+): Promise<EPLMatchLineups | undefined> => {
+  const config: AxiosRequestConfig = {
+    method: "get",
+    url: `${newendpoint}/v3/matches/${matchId}/lineups`,
+  };
+
+  try {
+    const { data }: AxiosResponse<EPLMatchLineups> = await axios(config);
+
+    return data;
+  } catch (e) {
+    showFailureToast(e);
+
+    return undefined;
+  }
+};
+
 export const getMatchReports = async (
-  fixtureId: number,
+  matchId: string,
 ): Promise<Report | undefined> => {
   const config: AxiosRequestConfig = {
     method: "get",
-    url: `${endpoint.replace(".com/football", ".com/content")}/PremierLeague/text/EN`,
+    url: "https://api.premierleague.com/content/premierleague/TEXT/en",
     params: {
-      page: 0,
-      references: `FOOTBALL_FIXTURE:${fixtureId}`,
+      references: `SDP_FOOTBALL_MATCH:${matchId}`,
       tagNames: "Match Report",
-      pageSize: 1,
+      detail: "DETAILED",
     },
     headers,
   };
@@ -252,30 +330,29 @@ export const getMatchReports = async (
 };
 
 export const getMatchCommentary = async (
-  fixtureId: string,
-  page: number,
-): Promise<Pagination<FixtureEvent>> => {
+  matchId: string,
+  _next: string | null = null,
+): Promise<Pagination<MatchCommentary>> => {
   const config: AxiosRequestConfig = {
     method: "get",
-    url: `${endpoint}/fixtures/${fixtureId}/textstream/EN`,
+    url: `${newendpoint}/v1/matches/${matchId}/commentary`,
     params: {
-      pageSize: 40,
-      sort: "desc",
-      page,
+      _limit: 40,
+      sort: "timestamp:desc",
+      _next,
     },
-    headers,
   };
 
   try {
-    const { data }: AxiosResponse<EPLFixtureEvents> = await axios(config);
-    const hasMore =
-      data.events.pageInfo.numPages > data.events.pageInfo.page + 1;
+    const { data }: AxiosResponse<EPLPagination<MatchCommentary>> =
+      await axios(config);
+    const hasMore = data.pagination._next ? true : false;
 
-    return { data: data.events.content, hasMore };
+    return { data: data.data, hasMore, cursor: data.pagination._next };
   } catch (e) {
     showFailureToast(e);
 
-    return { data: [], hasMore: false };
+    return { data: [], hasMore: false, cursor: null };
   }
 };
 
