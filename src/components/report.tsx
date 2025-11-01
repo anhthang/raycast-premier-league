@@ -4,7 +4,7 @@ import { usePromise } from "@raycast/utils";
 import json2md from "json2md";
 import { useMemo } from "react";
 import { getMatchReports } from "../api";
-import { Fixture } from "../types/sdp";
+import { Fixture } from "../types";
 
 const article2md = (html?: string) => {
   const regex = /<(\w+).*?>(.*?)<\/\1>/g;

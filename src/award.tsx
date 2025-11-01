@@ -5,7 +5,7 @@ import groupBy from "lodash.groupby";
 import { getAwards } from "./api";
 import { PlayerProfile } from "./components/player";
 import SearchBarSeason from "./components/searchbar_season";
-import { PlayerAward } from "./types/sdp";
+import { PlayerAward } from "./types";
 import { awardMap, convertToLocalTime, getProfileImg } from "./utils";
 
 export default function EPLAward() {

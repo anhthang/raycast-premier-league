@@ -2,7 +2,7 @@ import { getPreferenceValues, List } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import groupBy from "lodash.groupby";
 import { useMemo, useState } from "react";
-import { getMatches, getSeasons, getTeams } from "./api";
+import { getMatches, getSeasons, getClubs } from "./api";
 import Matchday from "./components/matchday";
 import SearchBarCompetition, {
   competitions,
@@ -24,7 +24,7 @@ export default function EPLMatchday() {
 
   const { data: clubs } = usePromise(
     async (season) => {
-      return season ? await getTeams(season) : [];
+      return season ? await getClubs(season) : [];
     },
     [season],
   );
@@ -58,7 +58,11 @@ export default function EPLMatchday() {
           type={filter}
           selected={teams}
           onSelect={filter === "competition" ? setCompetition : setTeams}
-          data={filter === "competition" ? competitions : clubs || []}
+          data={
+            filter === "competition"
+              ? competitions
+              : clubs?.map((c) => ({ title: c.name, value: c.id })) || []
+          }
         />
       }
     >

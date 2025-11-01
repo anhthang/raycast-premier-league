@@ -2,7 +2,7 @@ import { Color, List } from "@raycast/api";
 import { getAvatarIcon, usePromise } from "@raycast/utils";
 import { useMemo, useState } from "react";
 import { getMatchEvents, getMatchLineups, getTeamSquad } from "../api";
-import { Fixture, MatchEvent, Player } from "../types/sdp";
+import { Fixture, MatchEvent, Player } from "../types";
 import { getClubLogo, getProfileImg } from "../utils";
 import groupBy from "lodash.groupby";
 

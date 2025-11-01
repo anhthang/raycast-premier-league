@@ -1,7 +1,7 @@
 import { Color, Icon, Image } from "@raycast/api";
 import { showFailureToast } from "@raycast/utils";
 import { format, parse } from "date-fns";
-import { Fixture } from "../types/sdp";
+import { Fixture } from "../types";
 
 export const awardMap: Record<string, string> = {
   // CHAMPIONS: "Premier League Champion",
@@ -77,12 +77,7 @@ export const getClubLogo = (optaId: string) => {
   return `https://resources.premierleague.com/premierleague25/badges/${optaId}.png`;
 };
 
-export const positionMap: Record<string, string> = {
-  G: "Goalkeepers",
-  D: "Defenders",
-  M: "Midfielders",
-  F: "Forwards",
-};
+export const positions = ["Goalkeeper", "Defender", "Midfielder", "Forward"];
 
 export const getMatchStatusIcon = (match: Fixture) => {
   let icon: Image.ImageLike;

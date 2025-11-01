@@ -1,7 +1,7 @@
 import { Action, ActionPanel, Color, Icon, Image, List } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { getMatch, getMatchCommentary, getMatchOfficials } from "../api";
-import { Fixture } from "../types/sdp";
+import { Fixture } from "../types";
 import { convertToLocalTime, getMatchStatusIcon } from "../utils";
 
 const iconMap: Record<string, string> = {

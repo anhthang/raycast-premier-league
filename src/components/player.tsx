@@ -43,7 +43,7 @@ export const PlayerProfile = (player: Player) => {
         { h1: player.name.display },
         {
           img: {
-            source: getProfileImg(player.altIds.opta),
+            source: getProfileImg(player.id),
           },
         },
         {
@@ -132,25 +132,25 @@ export const PositionSection = (players: Player[]) => {
       <Grid.Item
         key={player.id}
         title={player.name.display}
-        subtitle={player.info.positionInfo}
-        keywords={[player.info.positionInfo]}
+        subtitle={player.position}
+        keywords={[player.position]}
         content={{
-          source: getProfileImg(player.altIds.opta),
+          source: getProfileImg(player.id),
           fallback: "player-missing.png",
         }}
         accessory={{
-          icon: getFlagEmoji(player.nationalTeam?.isoCode),
-          tooltip: player.nationalTeam?.country,
+          icon: getFlagEmoji(player.country.isoCode),
+          tooltip: player.country.country,
         }}
-        actions={
-          <ActionPanel>
-            <Action.Push
-              title="View Profile"
-              icon={Icon.Sidebar}
-              target={<PlayerProfile {...player} />}
-            />
-          </ActionPanel>
-        }
+        // actions={
+        //   <ActionPanel>
+        //     <Action.Push
+        //       title="View Profile"
+        //       icon={Icon.Sidebar}
+        //       target={<PlayerProfile {...player} />}
+        //     />
+        //   </ActionPanel>
+        // }
       />
     );
   });

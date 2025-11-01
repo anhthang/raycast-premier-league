@@ -24,8 +24,6 @@ declare namespace Preferences {
   export type Club = ExtensionPreferences & {}
   /** Preferences accessible in the `player` command */
   export type Player = ExtensionPreferences & {}
-  /** Preferences accessible in the `manager` command */
-  export type Manager = ExtensionPreferences & {}
   /** Preferences accessible in the `award` command */
   export type Award = ExtensionPreferences & {}
 }
@@ -39,8 +37,6 @@ declare namespace Arguments {
   export type Club = {}
   /** Arguments passed to the `player` command */
   export type Player = {}
-  /** Arguments passed to the `manager` command */
-  export type Manager = {}
   /** Arguments passed to the `award` command */
   export type Award = {}
 }

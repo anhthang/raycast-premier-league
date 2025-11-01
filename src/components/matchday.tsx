@@ -1,5 +1,5 @@
 import { Action, ActionPanel, Color, Icon, List } from "@raycast/api";
-import { Fixture } from "../types/sdp";
+import { Fixture } from "../types";
 import { convertToLocalTime, getMatchStatusIcon } from "../utils";
 import MatchCommentary from "./commentary";
 import MatchLineups from "./lineup";
@@ -81,7 +81,7 @@ export default function Matchday(props: PropsType) {
                     target={<MatchLineups match={match} title={subtitle} />}
                   />
                   <Action.OpenInBrowser
-                    url={`https://www.premierleague.com/match/${match.id}`}
+                    url={`https://www.premierleague.com/match/${match.matchId}`}
                   />
                 </ActionPanel.Section>
               </ActionPanel>
