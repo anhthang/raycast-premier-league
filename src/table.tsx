@@ -3,7 +3,7 @@ import { usePromise } from "@raycast/utils";
 import { useState } from "react";
 import { getTables } from "./api";
 import SearchBarSeason from "./components/searchbar_season";
-import { convertToLocalTime, getClubLogo } from "./utils";
+import { convertISOToLocalTime, getClubLogo } from "./utils";
 
 // const annotationMap: Record<string, string> = {
 //   Q: "Qualification",
@@ -219,9 +219,9 @@ export default function EPLTables() {
                               />
                               <List.Item.Detail.Metadata.Label
                                 title="Kick Off"
-                                text={convertToLocalTime(
+                                text={convertISOToLocalTime(
                                   next.kickoff,
-                                  "EEE d MMM yyyy, HH:mm",
+                                  next.kickoffTimezone,
                                 )}
                               />
                               <List.Item.Detail.Metadata.Label

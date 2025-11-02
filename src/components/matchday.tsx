@@ -1,6 +1,6 @@
 import { Action, ActionPanel, Color, Icon, List } from "@raycast/api";
 import { Fixture } from "../types";
-import { convertToLocalTime, getMatchStatusIcon } from "../utils";
+import { convertISOToLocalTime, getMatchStatusIcon } from "../utils";
 import MatchCommentary from "./commentary";
 import MatchLineups from "./lineup";
 import MatchReports from "./report";
@@ -16,7 +16,11 @@ export default function Matchday(props: PropsType) {
   return (
     <List.Section key={matchday} title={matchday}>
       {matches.map((match) => {
-        const time = convertToLocalTime(match.kickoff, "HH:mm");
+        const time = convertISOToLocalTime(
+          match.kickoff,
+          match.kickoffTimezone,
+          "HH:mm",
+        );
         const icon = getMatchStatusIcon(match);
 
         const accessories: List.Item.Accessory[] = [

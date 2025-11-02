@@ -6,7 +6,7 @@ import { getAwards } from "./api";
 import { PlayerProfile } from "./components/player";
 import SearchBarSeason from "./components/searchbar_season";
 import { PlayerAward } from "./types";
-import { awardMap, convertToLocalTime, getProfileImg } from "./utils";
+import { awardMap, formatDate, getProfileImg } from "./utils";
 
 export default function EPLAward() {
   const [seasonId, setSeasonId] = useState<string>();
@@ -57,7 +57,7 @@ export default function EPLAward() {
       {Object.entries(groupBy(awards, "date"))
         .reverse()
         .map(([date, monthAwards]) => {
-          const month = convertToLocalTime(date, "MMMM yyyy", "yyyy-M");
+          const month = formatDate(date, "yyyy-M", "MMMM yyyy");
 
           return (
             <Grid.Section

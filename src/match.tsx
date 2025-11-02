@@ -7,7 +7,7 @@ import Matchday from "./components/matchday";
 import SearchBarCompetition, {
   competitions,
 } from "./components/searchbar_competition";
-import { convertToLocalTime } from "./utils";
+import { convertISOToLocalTime } from "./utils";
 
 const { filter } = getPreferenceValues();
 
@@ -46,7 +46,7 @@ export default function EPLMatchday() {
 
   const matchday = groupBy(data, (f) =>
     f.kickoff
-      ? convertToLocalTime(f.kickoff, "EEE d MMM yyyy")
+      ? convertISOToLocalTime(f.kickoff, f.kickoffTimezone, "EEE d MMM yyyy")
       : "Date To Be Confirmed",
   );
 

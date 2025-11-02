@@ -22,6 +22,8 @@ export const awardMap: Record<string, string> = {
   YPOTS: "Young Player of the Season",
 };
 
+export const livePeriods = ["FirstTime", "HalfTime"];
+
 export const getFlagEmoji = (isoCode?: string) => {
   if (!isoCode) return "🏴";
 
@@ -44,26 +46,26 @@ export const getFlagEmoji = (isoCode?: string) => {
     .replace(/./g, (char) => String.fromCodePoint(127397 + char.charCodeAt(0)));
 };
 
-export const convertToLocalTime = (
-  label?: string,
-  outputFormat?: string,
-  customFormat?: string,
+export const convertISOToLocalTime = (
+  str: string,
+  tz: string = "GMT",
+  output: string = "EEE d MMM yyyy, HH:mm",
 ) => {
-  if (!label) return undefined;
-
-  const inputFormat = customFormat ?? "yyyy-MM-dd HH:mm:ss";
-
-  if (inputFormat.length === 14 && outputFormat?.length === 5) return undefined;
-
-  const time = label.replace("BST", "+01:00").replace("GMT", "+00:00");
-
   try {
-    return format(
-      parse(time, inputFormat, new Date()),
-      outputFormat || "EEE d MMM yyyy, HH:mm",
-    );
+    const stringWithTZ = tz === "BST" ? `${str}+01:00` : `${str}+00:00`;
+    return format(new Date(stringWithTZ), output);
   } catch (error) {
-    showFailureToast(error, { message: `Invalid time value: ${label}` });
+    showFailureToast(error, { message: `Invalid ISO date value: ${str}` });
+
+    return undefined;
+  }
+};
+
+export const formatDate = (str: string, input: string, output: string) => {
+  try {
+    return format(parse(str, input, new Date()), output);
+  } catch (error) {
+    showFailureToast(error, { message: `Invalid time value: ${str}` });
 
     return undefined;
   }
@@ -83,7 +85,7 @@ export const getMatchStatusIcon = (match: Fixture) => {
   let icon: Image.ImageLike;
   if (!match.kickoff) {
     icon = { source: Icon.Clock };
-  } else if (match.period === "L") {
+  } else if (livePeriods.includes(match.period)) {
     icon = { source: Icon.Livestream, tintColor: Color.Red };
   } else if (match.period === "FullTime") {
     icon = { source: Icon.CheckCircle, tintColor: Color.Green };

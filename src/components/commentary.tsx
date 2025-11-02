@@ -2,7 +2,11 @@ import { Action, ActionPanel, Color, Icon, Image, List } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { getMatch, getMatchCommentary, getMatchOfficials } from "../api";
 import { Fixture } from "../types";
-import { convertToLocalTime, getMatchStatusIcon } from "../utils";
+import {
+  convertISOToLocalTime,
+  livePeriods,
+  getMatchStatusIcon,
+} from "../utils";
 
 const iconMap: Record<string, string> = {
   "end 1": "time-half",
@@ -80,8 +84,9 @@ export default function MatchCommentary(props: {
     });
   }
 
-  const subtitle =
-    fixture?.period === "Live" ? "Live Match Commentary" : "Match Commentary";
+  const subtitle = livePeriods.includes(fixture?.period || "")
+    ? "Live Match Commentary"
+    : "Match Commentary";
 
   const RefreshMatch = () => (
     <Action
@@ -103,13 +108,19 @@ export default function MatchCommentary(props: {
     >
       {fixture && (
         <List.Item
-          title={convertToLocalTime(fixture.kickoff, "HH:mm") || "TBC"}
+          title={
+            convertISOToLocalTime(
+              fixture.kickoff,
+              fixture.kickoffTimezone,
+              "HH:mm",
+            ) || "TBC"
+          }
           subtitle={fixture.ground}
           icon={getMatchStatusIcon(fixture)}
           accessories={accessories}
           actions={
             <ActionPanel>
-              {fixture.period === "Live" && <RefreshMatch />}
+              {livePeriods.includes(fixture.period) && <RefreshMatch />}
               <Action.OpenInBrowser
                 url={`https://www.premierleague.com/en/match/${props.match.matchId}?tab=commentary`}
               />
@@ -146,7 +157,9 @@ export default function MatchCommentary(props: {
               keywords={[title, subtitle]}
               actions={
                 <ActionPanel>
-                  {fixture?.period === "Live" && <RefreshMatch />}
+                  {livePeriods.includes(fixture?.period || "") && (
+                    <RefreshMatch />
+                  )}
                 </ActionPanel>
               }
             />

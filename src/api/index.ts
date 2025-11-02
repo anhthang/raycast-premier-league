@@ -329,7 +329,7 @@ export const getMatchCommentary = async (
     url: `${endpoint}/v1/matches/${matchId}/commentary`,
     params: {
       _limit: 40,
-      sort: "timestamp:desc",
+      _sort: "timestamp:desc",
       _next,
     },
   };
