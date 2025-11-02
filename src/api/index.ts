@@ -394,11 +394,13 @@ export const getPlayerInformation = async (
 };
 
 export const getPlayerStats = async (
+  season: string,
   playerId: string,
 ): Promise<EPLPlayerStats | undefined> => {
   const config: AxiosRequestConfig = {
     method: "get",
-    url: `${endpoint}/v1/competitions/${competition}/players/${playerId}/stats`,
+    // url: `${endpoint}/v1/competitions/${competition}/players/${playerId}/stats`, // seems use for overral stats
+    url: `${endpoint}/v2/competitions/${competition}/seasons/${season}/players/${playerId}/stats`,
   };
 
   try {

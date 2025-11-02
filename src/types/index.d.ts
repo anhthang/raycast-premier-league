@@ -103,11 +103,11 @@ export interface Player {
   subPosition?: string;
 }
 
-// export interface PlayerSeasonId {
-//   competitionId: string;
-//   seasonId: string;
-//   playerId: string;
-// }
+export interface PlayerSeasonId {
+  competitionId: string;
+  seasonId: string;
+  playerId: string;
+}
 
 export interface AwardName {
   last: string;
