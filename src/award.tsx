@@ -5,8 +5,8 @@ import groupBy from "lodash.groupby";
 import { getAwards } from "./api";
 import { PlayerProfile } from "./components/player";
 import SearchBarSeason from "./components/searchbar_season";
-import { PlayerAward } from "./types";
 import { awardMap, formatDate, getProfileImg } from "./utils";
+import { Player } from "./types";
 
 export default function EPLAward() {
   const [seasonId, setSeasonId] = useState<string>();
@@ -18,7 +18,7 @@ export default function EPLAward() {
 
   const awards = data?.player_awards.concat(data?.manager_awards);
 
-  const getAwardGrids = (awards: PlayerAward[] | undefined) => {
+  const getAwardGrids = (awards: Player[] | undefined) => {
     return awards
       ?.sort((a, b) => a.type.toString().localeCompare(b.type.toString()))
       .map((award) => {

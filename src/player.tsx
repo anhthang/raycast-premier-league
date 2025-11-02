@@ -1,9 +1,10 @@
-import { Grid } from "@raycast/api";
+import { Action, ActionPanel, Grid, Icon } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import groupBy from "lodash.groupby";
 import { useState } from "react";
 import { getPlayersWithTerms } from "./api";
 import { getProfileImg, positions } from "./utils";
+import { PlayerProfile } from "./components/player";
 
 export default function EPLPlayer() {
   const [terms, setTerms] = useState<string>("");
@@ -50,6 +51,15 @@ export default function EPLPlayer() {
                       source: getProfileImg(player.data.objectSid),
                       fallback: "player-missing.png",
                     }}
+                    actions={
+                      <ActionPanel>
+                        <Action.Push
+                          title="View Profile"
+                          icon={Icon.Sidebar}
+                          target={<PlayerProfile id={player.data.objectSid} />}
+                        />
+                      </ActionPanel>
+                    }
                   />
                 );
               })}

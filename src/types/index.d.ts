@@ -76,8 +76,8 @@ export interface Team {
 }
 
 export interface Dates {
-  joinedClub: Date;
-  birth: Date;
+  joinedClub: string;
+  birth: string;
 }
 
 export interface Player {
@@ -102,6 +102,12 @@ export interface Player {
   knownName?: string;
   subPosition?: string;
 }
+
+// export interface PlayerSeasonId {
+//   competitionId: string;
+//   seasonId: string;
+//   playerId: string;
+// }
 
 export interface AwardName {
   last: string;

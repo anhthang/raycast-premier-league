@@ -373,6 +373,26 @@ export const getPlayers = async (props: {
   }
 };
 
+export const getPlayerInformation = async (
+  season: string,
+  playerId: string,
+): Promise<Player | undefined> => {
+  const config: AxiosRequestConfig = {
+    method: "get",
+    url: `${endpoint}/v1/competitions/${competition}/seasons/${season}/playerinfo/${playerId}`,
+  };
+
+  try {
+    const { data }: AxiosResponse<Player> = await axios(config);
+
+    return data;
+  } catch (e) {
+    showFailureToast(e);
+
+    return undefined;
+  }
+};
+
 export const getPlayerStats = async (
   playerId: string,
 ): Promise<EPLPlayerStats | undefined> => {

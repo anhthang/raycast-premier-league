@@ -1,128 +1,82 @@
 import { Action, ActionPanel, Detail, Grid, Icon } from "@raycast/api";
+import { Player } from "../types";
+import { formatDate, getFlagEmoji, getProfileImg } from "../utils";
 import { usePromise } from "@raycast/utils";
-import json2md from "json2md";
-import groupBy from "lodash.groupby";
-import { getPlayerStats } from "../api";
-import { Player, PlayerAward } from "../types";
-import { awardMap, getFlagEmoji, getProfileImg } from "../utils";
+import { getPlayerInformation, getSeasons } from "../api";
 
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-export const PlayerProfile = (player: Player) => {
-  const { data, isLoading } = usePromise(getPlayerStats, [player.id]);
-
-  const statsMap = groupBy(data, "name");
-  const stats = [
-    `Appearances: ${statsMap["appearances"]?.[0].value || 0}`,
-    `Goals: ${statsMap["goals"]?.[0].value || 0}`,
-    `Assists: ${statsMap["goal_assist"]?.[0].value || 0}`,
-  ];
-
-  if (player.info.position === "G" || player.info.position === "D") {
-    stats.push(`Clean sheets: ${statsMap["clean_sheet"]?.[0].value || 0}`);
-  }
+export const PlayerProfile = (props: { id: string }) => {
+  const { data: seasons } = usePromise(getSeasons);
+  const { data: player } = usePromise(
+    async (season, playerId) =>
+      season ? await getPlayerInformation(season, playerId) : undefined,
+    [seasons?.[0].seasonId, props.id],
+  );
 
   return (
-    <Detail
-      isLoading={isLoading}
-      navigationTitle={`${player.name.display} | Profile & Stats`}
-      markdown={json2md([
-        { h1: player.name.display },
-        {
-          img: {
-            source: getProfileImg(player.id),
-          },
-        },
-        {
-          h2: "Premier League Record",
-        },
-        {
-          p: stats,
-        },
-        {
-          h2: player.awards ? "Honours & Awards" : "",
-        },
-        ...Object.entries(player.awards || {})
-          .map(([key, awards]) => {
-            return [
-              {
-                h3: awardMap[key] || key,
-              },
-              {
-                ul: awards.map((award: PlayerAward) => {
-                  const month = Array.isArray(award.date)
-                    ? award.date[1]
-                    : award.date.month;
-                  return key.endsWith("MONTH")
-                    ? `${months[month - 1]} ${award.compSeason.label}`
-                    : award.compSeason.label;
-                }),
-              },
-            ];
-          })
-          .flat(),
-      ])}
-      metadata={
-        <Detail.Metadata>
-          <Detail.Metadata.Label
-            title="Nationality"
-            icon={getFlagEmoji(player.nationalTeam?.isoCode)}
-            text={player.nationalTeam?.country}
-          />
-          <Detail.Metadata.Label
-            title="Date of Birth"
-            text={player.birth.date.label}
-          />
-          {player.height && (
-            <Detail.Metadata.Label title="Height" text={`${player.height}cm`} />
-          )}
-          <Detail.Metadata.Label title="Age" text={player.age} />
-          <Detail.Metadata.Separator />
-          {player.currentTeam && (
+    player && (
+      <Detail
+        navigationTitle={`${player.name.display} | Profile & Stats`}
+        markdown={`## ${player.name.display}
+<img src="${getProfileImg(props.id)}" alt="${player.name.display}" width="220" height="280" />
+`}
+        metadata={
+          <Detail.Metadata>
             <Detail.Metadata.Label
-              title="Club"
-              text={player.currentTeam.name}
+              title="Date of Birth"
+              text={formatDate(player.dates.birth, "yyyy-MM-dd", "dd MMM yyyy")}
             />
-          )}
-          {player.joinDate && (
+            <Detail.Metadata.Label title="Position" text={player.position} />
             <Detail.Metadata.Label
-              title="Joined Date"
-              text={player.joinDate?.label}
+              title="Nationality"
+              icon={getFlagEmoji(player.country.isoCode)}
+              text={player.country.country}
             />
-          )}
-          <Detail.Metadata.Label
-            title="Position"
-            text={player.info.positionInfo}
-          />
-          <Detail.Metadata.Label
-            title="Shirt Number"
-            text={player.info.shirtNum?.toString()}
-          />
-        </Detail.Metadata>
-      }
-      actions={
-        <ActionPanel>
-          <Action.OpenInBrowser
-            url={`https://www.premierleague.com/players/${
-              player.id
-            }/${player.name.display.replace(/ /g, "-")}/overview`}
-          />
-        </ActionPanel>
-      }
-    />
+            <Detail.Metadata.Label
+              title="Place of Birth"
+              text={player.countryOfBirth}
+            />
+            <Detail.Metadata.Separator />
+            {player.height && (
+              <Detail.Metadata.Label
+                title="Height"
+                text={`${player.height}cm`}
+              />
+            )}
+            {player.height && (
+              <Detail.Metadata.Label
+                title="Weight"
+                text={`${player.weight}kg`}
+              />
+            )}
+            <Detail.Metadata.Label
+              title="Shirt Number"
+              text={player.shirtNum?.toString()}
+            />
+            <Detail.Metadata.Label
+              title="Preferred Foot"
+              text={player.preferredFoot}
+            />
+            {player.dates.joinedClub && (
+              <Detail.Metadata.Label
+                title="Joined Date"
+                text={formatDate(
+                  player.dates.joinedClub,
+                  "yyyy-MM-dd",
+                  "dd MMM yyyy",
+                )}
+              />
+            )}
+          </Detail.Metadata>
+        }
+        actions={
+          <ActionPanel>
+            <Action.OpenInBrowser
+              url={`https://www.premierleague.com/en/players/${player.id}/${player.name.display.toLowerCase().replace(/ /g, "-")}/overview`}
+            />
+          </ActionPanel>
+        }
+      />
+    )
   );
 };
 
@@ -142,15 +96,15 @@ export const PositionSection = (players: Player[]) => {
           icon: getFlagEmoji(player.country.isoCode),
           tooltip: player.country.country,
         }}
-        // actions={
-        //   <ActionPanel>
-        //     <Action.Push
-        //       title="View Profile"
-        //       icon={Icon.Sidebar}
-        //       target={<PlayerProfile {...player} />}
-        //     />
-        //   </ActionPanel>
-        // }
+        actions={
+          <ActionPanel>
+            <Action.Push
+              title="View Profile"
+              icon={Icon.Sidebar}
+              target={<PlayerProfile {...player} />}
+            />
+          </ActionPanel>
+        }
       />
     );
   });
