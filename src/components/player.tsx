@@ -25,7 +25,7 @@ export const PlayerStats = (props: { id: PlayerSeasonId }) => {
   return (
     <List
       isLoading={isLoading}
-      navigationTitle={`${stats?.player.name} | Stats`}
+      navigationTitle={`${stats?.player.name} | Statistics`}
       searchBarAccessory={
         <SearchBarSeason selected={seasonId} onSelect={setSeasonId} />
       }

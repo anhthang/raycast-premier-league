@@ -24,7 +24,7 @@ export default function EPLAward() {
       .map((award) => {
         return (
           <Grid.Item
-            key={award.type}
+            key={[award.id, award.type].join()}
             title={awardMap[award.type]}
             subtitle={award.name.display || award.currentTeam?.name}
             content={{

@@ -323,7 +323,7 @@ export interface Content {
   onDemandUrl: null;
 }
 
-export interface ConentMetadata {
+export interface ContentMetadata {
   awayTeamMatchReportLinkText: string;
   awayTeamMatchReportURL: string;
   awayTeamOptaID: string;

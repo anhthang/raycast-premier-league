@@ -4,10 +4,12 @@ import { convertISOToLocalTime, getMatchStatusIcon } from "../utils";
 import MatchCommentary from "./commentary";
 import MatchLineups from "./lineup";
 import MatchReports from "./report";
+import { JSX } from "react";
 
 interface PropsType {
   matchday: string;
   matches: Fixture[];
+  actions: JSX.Element;
 }
 
 export default function Matchday(props: PropsType) {
@@ -88,6 +90,7 @@ export default function Matchday(props: PropsType) {
                     url={`https://www.premierleague.com/en/match/${match.matchId}`}
                   />
                 </ActionPanel.Section>
+                {props.actions}
               </ActionPanel>
             }
           />

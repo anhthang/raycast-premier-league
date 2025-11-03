@@ -5,7 +5,7 @@ import { Fixture } from "../types";
 
 export const awardMap: Record<string, string> = {
   // CHAMPIONS: "Premier League Champion",
-  // GAME_CHANGER_AWARD: "Game Changer",
+  GCOTS: "Game Changer",
   GOTM: "Goal of the Month",
   GOTS: "Goal of the Season",
   GB: "Golden Boot",
@@ -22,7 +22,7 @@ export const awardMap: Record<string, string> = {
   YPOTS: "Young Player of the Season",
 };
 
-export const livePeriods = ["FirstTime", "HalfTime"];
+export const livePeriods = ["FirstHalf", "SecondHalf", "HalfTime"];
 
 export const getFlagEmoji = (isoCode?: string) => {
   if (!isoCode) return "🏴";

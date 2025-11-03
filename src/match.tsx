@@ -1,8 +1,14 @@
-import { getPreferenceValues, List } from "@raycast/api";
+import {
+  Action,
+  ActionPanel,
+  getPreferenceValues,
+  Icon,
+  List,
+} from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import groupBy from "lodash.groupby";
-import { useMemo, useState } from "react";
-import { getMatches, getSeasons, getClubs } from "./api";
+import { useEffect, useMemo, useState } from "react";
+import { getMatches, getSeasons, getClubs, getMatchweek } from "./api";
 import Matchday from "./components/matchday";
 import SearchBarCompetition, {
   competitions,
@@ -15,7 +21,11 @@ export default function EPLMatchday() {
   const [competition, setCompetition] = useState<string>(competitions[0].value);
   const [team, setTeam] = useState<string>("");
 
-  // const { data: matchweek } = usePromise(getMatchweek);
+  const [matchweek, setMatchweek] = useState<number>(0);
+
+  useEffect(() => {
+    getMatchweek().then(setMatchweek);
+  }, []);
 
   const { data: seasons = [] } = usePromise(
     (comp) => getSeasons(comp),
@@ -32,16 +42,17 @@ export default function EPLMatchday() {
   );
 
   const { isLoading, data, pagination } = usePromise(
-    (competition, team, season) =>
+    (competition, team, season, matchweek) =>
       async ({ cursor: _next }) => {
         return await getMatches({
           competition,
           team,
           season,
+          matchweek,
           _next,
         });
       },
-    [competition, team, season],
+    [competition, team, season, matchweek],
   );
 
   const matchday = groupBy(data, (f) =>
@@ -50,10 +61,34 @@ export default function EPLMatchday() {
       : "Date To Be Confirmed",
   );
 
+  const actions = (
+    <ActionPanel.Section title="Matchweek">
+      {matchweek > 1 && (
+        <Action
+          title={`Matchweek ${matchweek - 1}`}
+          icon={Icon.ArrowLeftCircle}
+          onAction={() => {
+            setMatchweek(matchweek - 1);
+          }}
+        />
+      )}
+      {matchweek < 38 && (
+        <Action
+          title={`Matchweek ${matchweek + 1}`}
+          icon={Icon.ArrowRightCircle}
+          onAction={() => {
+            setMatchweek(matchweek + 1);
+          }}
+        />
+      )}
+    </ActionPanel.Section>
+  );
+
   return (
     <List
       throttle
       isLoading={isLoading}
+      navigationTitle={`Matchweek ${matchweek} | Fixtures & Live Matches`}
       pagination={pagination}
       searchBarAccessory={
         <SearchBarCompetition
@@ -69,7 +104,14 @@ export default function EPLMatchday() {
       }
     >
       {Object.entries(matchday).map(([day, matches]) => {
-        return <Matchday key={day} matchday={day} matches={matches} />;
+        return (
+          <Matchday
+            key={day}
+            matchday={day}
+            matches={matches}
+            actions={actions}
+          />
+        );
       })}
     </List>
   );

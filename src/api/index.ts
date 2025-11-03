@@ -53,7 +53,7 @@ export const getSeasons = async (comp: string = "8"): Promise<Season[]> => {
   }
 };
 
-export const getMatchweek = async (): Promise<number | undefined> => {
+export const getMatchweek = async (): Promise<number> => {
   const config: AxiosRequestConfig = {
     method: "GET",
     url: "https://resources.premierleague.com/premierleague25/config/current-gameweek.json",
@@ -66,7 +66,7 @@ export const getMatchweek = async (): Promise<number | undefined> => {
   } catch (e) {
     showFailureToast(e);
 
-    return undefined;
+    return 0;
   }
 };
 
@@ -197,14 +197,19 @@ export const getMatches = async (props: {
   season: string;
   competition: string;
   team?: string;
-  // matchweek?: number;
+  matchweek?: number;
   _next?: string;
 }): Promise<Pagination<Fixture>> => {
+  if (props.competition !== competition) {
+    delete props.matchweek;
+  }
+
   const config: AxiosRequestConfig = {
     method: "get",
     url: `${endpoint}/v2/matches`,
     params: {
       ...props,
+      _sort: "kickoff:asc",
     },
   };
 
@@ -399,7 +404,7 @@ export const getPlayerStats = async (
 ): Promise<EPLPlayerStats | undefined> => {
   const config: AxiosRequestConfig = {
     method: "get",
-    // url: `${endpoint}/v1/competitions/${competition}/players/${playerId}/stats`, // seems use for overral stats
+    // url: `${endpoint}/v1/competitions/${competition}/players/${playerId}/stats`, // seems use for overall stats
     url: `${endpoint}/v2/competitions/${competition}/seasons/${season}/players/${playerId}/stats`,
   };
 
