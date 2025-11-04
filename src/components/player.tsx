@@ -8,7 +8,7 @@ import SearchBarSeason from "./searchbar_season";
 
 const toPercentage = (success: number = 0, unsuccess: number = 0) => {
   const total = success + unsuccess;
-  const percent = (success * 100) / (success + unsuccess);
+  const percent = total > 0 ? (success * 100) / total : 0;
 
   return `${total} (${percent.toFixed(2)}%)`;
 };
@@ -232,7 +232,7 @@ export const PlayerProfile = (props: { id: string }) => {
                 text={`${player.height}cm`}
               />
             )}
-            {player.height && (
+            {player.weight && (
               <Detail.Metadata.Label
                 title="Weight"
                 text={`${player.weight}kg`}
@@ -283,7 +283,6 @@ export const PositionSection = (players: Player[]) => {
       <Grid.Item
         key={player.id}
         title={player.name.display}
-        subtitle={player.position}
         keywords={[player.position]}
         content={{
           source: getProfileImg(player.id),
