@@ -40,7 +40,7 @@ export default function EPLMatchday() {
     getMatchweek().then(setMatchweek);
   }, []);
 
-  const { data: seasons = [] } = usePromise(getSeasons, [competition]);
+  const { data: seasons = [] } = usePromise(getSeasons);
 
   const season = useMemo(() => seasons[0]?.seasonId, [seasons]);
 
@@ -66,8 +66,8 @@ export default function EPLMatchday() {
     return {
       competition,
       season,
-      [`kickoff>${start}`]: undefined,
-      [`kickoff<${end}`]: undefined,
+      [`kickoff>${start}`]: "",
+      [`kickoff<${end}`]: "",
       _limit: 20,
     };
   }, [competition, team, season, matchweek, month]);
