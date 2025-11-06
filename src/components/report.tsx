@@ -32,12 +32,15 @@ const article2md = (html?: string) => {
 };
 
 export default function MatchReports(props: { match: Fixture; title: string }) {
-  const { data, isLoading } = usePromise(getMatchReports, [props.match.id]);
+  const { data, isLoading } = usePromise(getMatchReports, [
+    props.match.matchId,
+  ]);
 
   const reports = useMemo(() => {
     const content = data?.body;
 
-    const standardArticleRegex = /<div class="standardArticle">(.+?)<\/div>/s;
+    const standardArticleRegex =
+      /<div class="standardArticle(?:[^"]*)">([\s\S]*?)<\/div>/;
     const standardArticleContent = content?.match(standardArticleRegex)?.[1];
 
     const json = article2md(standardArticleContent);
